@@ -1,0 +1,27 @@
+spring:
+  application.name: agent
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY}
+      base-url: https://api.openai.com/v1
+      completions-path: /completions
+      embeddings-path: /embeddings
+qdrant:
+  host: localhost
+  port: 6334  # gRPC port
+  collection-name: documents
+  vector-size: 384
+  vector-name: text_embedding    # Named vector identifier
+  distance: Cosine              # Cosine, Dot, Euclid, Manhattan
+  on-disk: false               # RAM storage for better performance
+  use-tls: false               # RAM storage for better performance
+  hnsw-config:                 # HNSW index configuration
+    m: 16                      # Connections per element (higher = better recall, more memory)
+    ef-construct: 100          # Search quality during index construction
+    full-scan-threshold: 10000 # When to use brute force vs HNSW
+    max-indexing-threads: 0    # Parallel threads (0 = auto-detect)
+  refresh: false               # Create clear collection
+logging:
+  level:
+    pl.ejdev:.agent: DEBUG
+    reactor.netty.http.client: DEBUG
