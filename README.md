@@ -1,4 +1,16 @@
-# Getting Started
+# Spring Agent
+
+This project requires Qdrant and OpenAI API-KEY
+
+### OpenAI Api key
+To obtain OpenAI [api-keys](https://platform.openai.com/api-keys) webpage
+
+### Qdrant
+You can install qdrant locally using 
+```bash
+# Arch linux
+yay -S qdrant-bin
+```
 
 ## API Usage Examples:
 
