@@ -7,6 +7,7 @@ import org.springframework.ai.embedding.TokenCountBatchingStrategy
 import org.springframework.ai.vectorstore.VectorStore
 import org.springframework.ai.vectorstore.qdrant.QdrantVectorStore
 import org.springframework.context.support.BeanDefinitionDsl
+import org.springframework.core.env.ConfigurableEnvironment
 import pl.ejdev.agent.infrastructure.qdrant.adapter.create.CreateQdrantAdapter
 import pl.ejdev.agent.infrastructure.qdrant.adapter.search.SearchQdrantAdapter
 import pl.ejdev.agent.infrastructure.qdrant.port.out.CreateQdrantPort
@@ -17,18 +18,23 @@ import pl.ejdev.agent.infrastructure.qdrant.usecase.search.SearchQdrantUseCase
 fun BeanDefinitionDsl.qdrantBeans() {
     bean<QdrantGrpcClient>(::qdrantGrpcClient)
     bean<QdrantClient>()
-    bean<VectorStore> {
-        val collectionName: String = env.getProperty("qdrant.collection-name").let(::requireNotNull)
-        val refresh = env.getProperty("qdrant.refresh")?.toBoolean() ?: false
-        qdrantVectorStore(
-            ref<QdrantClient>().withCollection(collectionName, refresh),
-            collectionName
-        )
-    }
+    bean<VectorStore> { qdrantVectorStore(env, ref()) }
     bean<SearchQdrantPort> { SearchQdrantAdapter(ref()) }
     bean<CreateQdrantPort> { CreateQdrantAdapter(ref()) }
     bean<CreateQdrantUseCase> { CreateQdrantUseCase(ref()) }
     bean<SearchQdrantUseCase> { SearchQdrantUseCase(ref()) }
+}
+
+private fun BeanDefinitionDsl.BeanSupplierContext.qdrantVectorStore(
+    env: ConfigurableEnvironment,
+    client: QdrantClient
+): QdrantVectorStore {
+    val collectionName: String = env.getProperty("qdrant.collection-name").let(::requireNotNull)
+    val refresh = env.getProperty("qdrant.refresh")?.toBoolean() ?: false
+    return qdrantVectorStore(
+        client.withCollection(collectionName, refresh),
+        collectionName
+    )
 }
 
 private fun BeanDefinitionDsl.BeanSupplierContext.qdrantVectorStore(

@@ -21,7 +21,7 @@ class DocumentHandler(
                 createDocumentUseCase.handle(this)
                 mapOf(
                     "message" to "Documents added successfully",
-                    "count" to documents.size
+                    "count" to this.documents.size
                 )
             }
             .map { msg -> ServerResponse.ok().body(msg) }

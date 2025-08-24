@@ -1,17 +1,16 @@
 package pl.ejdev.agent
 
 import org.springframework.boot.Banner
-import org.springframework.boot.WebApplicationType.SERVLET
+import org.springframework.boot.WebApplicationType
 import org.springframework.boot.runApplication
 import pl.ejdev.agent.config.AppBeansConfig
 
-class AgentApplication
+open class AgentApplication
 
 fun main(args: Array<String>) {
     runApplication<AgentApplication>(*args) {
-        webApplicationType = SERVLET
+        webApplicationType = WebApplicationType.SERVLET
         setBannerMode(Banner.Mode.OFF)
-
         addInitializers(AppBeansConfig.beans)
     }
 }
