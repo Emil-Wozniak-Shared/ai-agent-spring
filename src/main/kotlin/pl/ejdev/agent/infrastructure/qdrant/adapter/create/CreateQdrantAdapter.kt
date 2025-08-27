@@ -14,10 +14,10 @@ class CreateQdrantAdapter(
             .map { QuadrantDocument(it.text, it.metadata) }
             .let {
                 vectorStore.add(it)
-                CreateQdrantResult.Success(it.size)
+                CreateQdrantResult.Success(count = it.size)
             }
     } catch (e: Exception) {
         e.printStackTrace()
-        CreateQdrantResult.Failure("${e.message}")
+        CreateQdrantResult.Failure(message = "${e.message}")
     }
 }

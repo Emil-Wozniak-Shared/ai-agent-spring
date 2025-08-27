@@ -17,14 +17,8 @@ class DocumentHandler(
     fun createMany(request: ServerRequest): ServerResponse =
         request.body<List<Document>>()
             .let(::CreateDocumentQuery)
-            .runCatching {
-                createDocumentUseCase.handle(this)
-                mapOf(
-                    "message" to "Documents added successfully",
-                    "count" to this.documents.size
-                )
-            }
-            .map { msg -> ServerResponse.ok().body(msg) }
+            .runCatching { createDocumentUseCase.handle(this) }
+            .map { result -> ServerResponse.ok().body(result) }
             .getOrElse { ServerResponse.badRequest().body(mapOf("error" to "Failed to add documents")) }
 
     fun search(request: ServerRequest): ServerResponse =
