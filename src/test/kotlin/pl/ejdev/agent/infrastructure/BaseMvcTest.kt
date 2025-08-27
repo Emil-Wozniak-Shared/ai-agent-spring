@@ -86,7 +86,6 @@ abstract class BaseMvcTest {
 
     private fun BeanDefinitionDsl.webServer(randomPort: Boolean) {
         val port = getPort(randomPort)
-        bean { TomcatServletWebServerFactory(port) }
         bean<ServletWebServerFactoryAutoConfiguration.BeanPostProcessorsRegistrar>()
         bean<DispatcherServletAutoConfiguration>()
         bean<WebMvcAutoConfiguration>()
@@ -94,8 +93,9 @@ abstract class BaseMvcTest {
         bean<ServletContext> { MockServletContext() }
         bean<MockMvcAutoConfiguration>()
         bean { jacksonObjectMapper {} }
-        bean { MockMvcBuilders.routerFunctions(ref()).build() }
+        bean { TomcatServletWebServerFactory(port) }
         bean { MockMvcHttpConnector(ref()) }
+        bean { MockMvcBuilders.routerFunctions(ref()).build() }
         bean { WebTestClient.bindToServer(ref()).build() }
     }
 
