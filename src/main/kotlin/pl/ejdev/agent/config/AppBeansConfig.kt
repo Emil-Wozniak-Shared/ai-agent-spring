@@ -1,6 +1,7 @@
 package pl.ejdev.agent.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.springframework.beans.factory.support.DefaultListableBeanFactory
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
@@ -19,6 +20,7 @@ import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.invoke
 import org.springframework.security.config.http.SessionCreationPolicy.STATELESS
+import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.factory.PasswordEncoderFactories
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
@@ -56,15 +58,20 @@ object AppBeansConfig {
         bean<WebMvcAutoConfiguration>()
         bean<JacksonAutoConfiguration>()
         bean<DefaultListableBeanFactory>()
-        bean<ObjectMapper>()
+        bean { jacksonObjectMapper {} }
         bean<WebMvcConfigurer> { AppWebMvcConfigurer() }
     }
 
-    private fun BeanDefinitionDsl.security() {
+    fun BeanDefinitionDsl.security() {
+        bean<PasswordEncoder> { PasswordEncoderFactories.createDelegatingPasswordEncoder() }
+        bean<UserDetailsService> { UserDetailsServiceProvider(ref())}
+        bean<AuthenticationManager> { AppAuthenticationManager(ref()) }
+        bean<AuthenticationProvider> { AppAuthenticationProvider(ref(), ref()) }
+        bean<TokenService>()
+        bean<TokenHandler>()
         bean<JwtAuthenticationEntryPoint>()
         bean<SecurityAutoConfiguration>()
         bean<UserDetailsServiceAutoConfiguration>()
-        bean<PasswordEncoder> { PasswordEncoderFactories.createDelegatingPasswordEncoder() }
         bean<SecurityFilterChain> {
             val httpSecurity = ref<HttpSecurity>()
             httpSecurity {
@@ -83,10 +90,6 @@ object AppBeansConfig {
             }
             httpSecurity.build()
         }
-        bean<AuthenticationManager> { AppAuthenticationManager(ref()) }
-        bean<AuthenticationProvider> { AppAuthenticationProvider(ref(), ref()) }
-        bean<TokenService>()
-        bean<TokenHandler>()
     }
 }
 

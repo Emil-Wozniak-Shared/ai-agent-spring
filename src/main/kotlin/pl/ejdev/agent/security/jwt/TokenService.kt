@@ -2,6 +2,7 @@ package pl.ejdev.agent.security.jwt
 
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.userdetails.UserDetailsService
 import pl.ejdev.agent.infrastructure.user.adapter.UserAuthenticationService
 import pl.ejdev.agent.security.dto.TokenRequest
 import pl.ejdev.agent.security.dto.TokenResponse
@@ -9,7 +10,7 @@ import pl.ejdev.agent.security.error.UserNotFoundException
 
 class TokenService(
     private val authenticationManager: AuthenticationManager,
-    private val userDetailsService: UserAuthenticationService
+    private val userDetailsService: UserDetailsService
 ) {
     fun generateToken(tokenRequest: TokenRequest): TokenResponse = userDetailsService
         .loadUserByUsername(tokenRequest.username)

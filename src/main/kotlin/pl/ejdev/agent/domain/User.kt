@@ -12,7 +12,7 @@ enum class Authority: GrantedAuthority {
         override fun getAuthority(): String = this::name.name
     };
     companion object {
-        fun from(authority: GrantedAuthority) = when(authority.authority) {
+        fun from(authority: GrantedAuthority) = when(authority.authority.substringAfter("_")) {
             "USER" -> USER
             "ADMIN" -> ADMIN
             else -> error("Unknown authority $authority")

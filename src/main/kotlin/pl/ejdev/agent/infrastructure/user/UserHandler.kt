@@ -11,7 +11,6 @@ import pl.ejdev.agent.infrastructure.user.dto.CreateUserRequest
 import pl.ejdev.agent.infrastructure.user.dto.UpdateUserRequest
 
 class UserHandler(private val userService: UserService) {
-
     fun getAllUsers(request: ServerRequest): ServerResponse {
         return try {
             val users = userService.findAll()

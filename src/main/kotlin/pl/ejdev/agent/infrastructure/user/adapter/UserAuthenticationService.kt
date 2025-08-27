@@ -1,8 +1,7 @@
 package pl.ejdev.agent.infrastructure.user.adapter
 
-import org.springframework.security.core.userdetails.User.*
+import org.springframework.security.core.userdetails.User.builder
 import org.springframework.security.core.userdetails.UserDetails
-import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.password.PasswordEncoder
 import pl.ejdev.agent.domain.Authority
 import pl.ejdev.agent.domain.User
@@ -10,7 +9,7 @@ import pl.ejdev.agent.infrastructure.user.port.out.UserDao
 
 class UserAuthenticationService(
     private val passwordEncoder: PasswordEncoder
-): UserDao, UserDetailsService {
+): UserDao {
     private val users: MutableMap<Long, UserDetails> = mutableMapOf()
     init {
         builder()
@@ -32,7 +31,7 @@ class UserAuthenticationService(
         User(
             id,
             user.username,
-            hashPassword = "",
+            hashPassword = user.password,
             roles = user.authorities.map { Authority.from(it) }
         )
     }
@@ -58,7 +57,4 @@ class UserAuthenticationService(
 
     override fun existsById(id: Long): Boolean = users.any { it.key == id }
 
-    override fun loadUserByUsername(username: String): UserDetails? = users
-        .values
-        .find { it.username == username }
 }

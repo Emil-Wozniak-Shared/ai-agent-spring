@@ -4,7 +4,6 @@ import pl.ejdev.agent.domain.User
 import pl.ejdev.agent.infrastructure.user.port.out.UserDao
 
 class UserService(private val userRepository: UserDao) {
-
     fun findAll(): List<User> {
         return userRepository.findAll()
     }
