@@ -19,7 +19,6 @@ class SearchArticlesUseCase(
         .let { getArticlesSummariesPort.handle(it) }
         .map { it.toPubmedArticle() }
         .let { SearchArticleResult(it) }
-
 }
 
 private fun ArticleResponse.toPubmedArticle(): PubmedArticle = PubmedArticle(

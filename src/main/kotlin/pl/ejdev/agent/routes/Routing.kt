@@ -15,12 +15,12 @@ import pl.ejdev.agent.security.jwt.TokenHandler
 
 fun BeanDefinitionDsl.routes() {
     bean<RouterFunction<ServerResponse>> {
-        val userHandler = ref<UserHandler>()
-        val documentHandler = ref<DocumentHandler>()
-        val tokenHandler = ref<TokenHandler>()
-        val pubmedArticlesHandler = ref<PubmedArticlesHandler>()
-
-        routerFunction(userHandler, documentHandler, tokenHandler, pubmedArticlesHandler)
+        routerFunction(
+            userHandler = ref(),
+            documentHandler = ref(),
+            tokenHandler = ref(),
+            pubmedArticlesHandler = ref()
+        )
     }
 }
 
