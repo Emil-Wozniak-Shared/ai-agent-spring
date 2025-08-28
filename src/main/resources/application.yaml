@@ -30,3 +30,6 @@ logging:
     pl.ejdev:.agent: DEBUG
     org.springframework.web: DEBUG
     org.springframework.web.servlet.DispatcherServlet: DEBUG
+
+app:
+  features: pubmed

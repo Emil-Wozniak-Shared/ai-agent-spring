@@ -17,11 +17,12 @@ yay -S qdrant-bin
 1. Authenticate:
     ```bash
     http POST :8080/api/token <<<'{ "username": "user", "password": "password" }'
+    APP_TOKEN=$(http POST :8080/api/token <<<'{ "username": "user", "password": "password" }' | jq ".token" | sed 's/\"//')
     ```
 
 2. Add Documents:
     ```bash
-   http POST http://localhost:8080/api/documents Content-Type:application/json 'Authorization:Bearer <TOKEN>' <<< '[
+   http POST http://localhost:8080/api/documents Content-Type:application/json "Authorization:Bearer ${APP_TOKEN}" <<< '[
    {
       "text": "This is a sample document about artificial intelligence and machine learning",
       "metadata": {"category": "AI", "author": "John Doe", "tags": ["ai", "technology"]}
@@ -43,7 +44,7 @@ yay -S qdrant-bin
 
 3. Search Documents - Basic:
    ```bash
-    http POST :8080/api/documents/search Content-Type:application/json 'Authorization:Bearer <TOKEN>' <<< '{
+    http POST :8080/api/documents/search Content-Type:application/json "Authorization:Bearer ${APP_TOKEN}" <<< '{
     "query": "artificial intelligence",
     "limit": 5,
     "threshold": 0.7
@@ -52,7 +53,7 @@ yay -S qdrant-bin
 
 4. Search Documents - Machine Learning:
     ```bash
-    http POST :8080/api/documents/search Content-Type:application/json 'Authorization:Bearer <TOKEN>' <<< '{
+    http POST :8080/api/documents/search Content-Type:application/json "Authorization:Bearer ${APP_TOKEN}" <<< '{
    "query": "machine learning algorithms",
    "limit": 3,
    "threshold": 0.6
@@ -61,7 +62,7 @@ yay -S qdrant-bin
 
 5. Search Documents - Neural Networks:
    ```bash
-    http POST :8080/api/documents/search Content-Type:application/json 'Authorization:Bearer <TOKEN>' <<< '{
+    http POST :8080/api/documents/search Content-Type:application/json "Authorization:Bearer ${APP_TOKEN}" <<< '{
    "query": "neural networks and deep learning",
    "limit": 2,
    "threshold": 0.5
@@ -70,13 +71,21 @@ yay -S qdrant-bin
 
 6. Search Documents - High Threshold (stricter matching):
     ```bash
-    http POST :8080/api/documents/search Content-Type:application/json 'Authorization:Bearer <TOKEN>' <<< '{
+    http POST :8080/api/documents/search Content-Type:application/json "Authorization:Bearer ${APP_TOKEN}" <<< '{
    "query": "natural language processing",
    "limit": 10,
    "threshold": 0.8
    }'
    ```
-
+7. Search Pubmed articles:
+   ```bash
+    http POST :8080/api/pubmed/search/articles Content-Type:application/json "Authorization:Bearer ${APP_TOKEN}" <<< '{
+    "query": "cancer",
+    "email": "dummy@gmail.com",
+    "maxResults": 5
+    }'
+   ```
+   
 ## Key Features of Updated Implementation:
 
 ✅ **Named Vectors**: Modern Qdrant approach supporting multiple vectors per point

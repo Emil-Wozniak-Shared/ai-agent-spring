@@ -9,6 +9,7 @@ import pl.ejdev.agent.config.RouterConfig
 import pl.ejdev.agent.config.exceptions.ExceptionHandlerFilter
 import pl.ejdev.agent.config.htmlRoutes
 import pl.ejdev.agent.infrastructure.documents.DocumentHandler
+import pl.ejdev.agent.infrastructure.pubmed.PubmedArticlesHandler
 import pl.ejdev.agent.infrastructure.user.UserHandler
 import pl.ejdev.agent.security.jwt.TokenHandler
 
@@ -17,15 +18,17 @@ fun BeanDefinitionDsl.routes() {
         val userHandler = ref<UserHandler>()
         val documentHandler = ref<DocumentHandler>()
         val tokenHandler = ref<TokenHandler>()
+        val pubmedArticlesHandler = ref<PubmedArticlesHandler>()
 
-        routerFunction(userHandler, documentHandler, tokenHandler)
+        routerFunction(userHandler, documentHandler, tokenHandler, pubmedArticlesHandler)
     }
 }
 
 fun routerFunction(
     userHandler: UserHandler,
     documentHandler: DocumentHandler,
-    tokenHandler: TokenHandler
+    tokenHandler: TokenHandler,
+    pubmedArticlesHandler: PubmedArticlesHandler
 ): RouterFunction<ServerResponse> = router {
     filter(RouterConfig::filter)
     filter(ExceptionHandlerFilter::filter)
@@ -39,6 +42,9 @@ fun routerFunction(
         ("/documents" and accept(APPLICATION_JSON) and contentType(APPLICATION_JSON)).nest {
             POST("", documentHandler::createMany)
             POST("/search", documentHandler::search)
+        }
+        ("/pubmed" and contentType(APPLICATION_JSON)).nest {
+            POST("/search/articles", pubmedArticlesHandler::search)
         }
         POST("/token", tokenHandler::create)
     }

@@ -30,6 +30,7 @@ import pl.ejdev.agent.domain.Authority.ADMIN
 import pl.ejdev.agent.infrastructure.documents.documentBeans
 import pl.ejdev.agent.infrastructure.embedding.embeddingBeans
 import pl.ejdev.agent.infrastructure.openai.openAiBeans
+import pl.ejdev.agent.infrastructure.pubmed.pubmedBeans
 import pl.ejdev.agent.infrastructure.qdrant.qdrantBeans
 import pl.ejdev.agent.infrastructure.user.userBeans
 import pl.ejdev.agent.routes.routes
@@ -47,6 +48,7 @@ object AppBeansConfig {
         qdrantBeans()
         documentBeans()
         userBeans()
+        pubmedBeans()
         embeddingBeans()
         routes()
     }
