@@ -1,13 +1,16 @@
 package pl.ejdev.agent.infrastructure.pubmed.dto
 
+import org.springframework.web.servlet.function.ServerRequest
+import kotlin.jvm.optionals.getOrElse
+
 data class SearchArticlesQuery(
-    val query: String,
+    val ids: List<String>,
     val email: String,
-    val maxResults: Int
 ) {
     companion object {
-        fun from(request: SearchArticlesRequest): SearchArticlesQuery = request.run {
-            SearchArticlesQuery(query, email, maxResults)
-        }
+        fun from(request: ServerRequest) = SearchArticlesQuery(
+            ids = request.pathVariable("ids").split(","),
+            email = request.param("email").getOrElse { throw Exception("email is required") }
+        )
     }
 }

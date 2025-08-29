@@ -28,7 +28,8 @@ fun routerFunction(
     userHandler: UserHandler,
     documentHandler: DocumentHandler,
     tokenHandler: TokenHandler,
-    pubmedArticlesHandler: PubmedArticlesHandler
+    pubmedArticlesHandler: PubmedArticlesHandler,
+
 ): RouterFunction<ServerResponse> = router {
     filter(RouterConfig::filter)
     filter(ExceptionHandlerFilter::filter)
@@ -45,6 +46,7 @@ fun routerFunction(
         }
         ("/pubmed" and contentType(APPLICATION_JSON)).nest {
             POST("/search/articles", pubmedArticlesHandler::search)
+            POST("/search/articles/{ids}", pubmedArticlesHandler::searchBy)
         }
         POST("/token", tokenHandler::create)
     }

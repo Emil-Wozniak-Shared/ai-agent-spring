@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import pl.ejdev.agent.domain.pubmed.ArticleIds
 import pl.ejdev.agent.domain.pubmed.Authors
 import pl.ejdev.agent.domain.pubmed.History
+import pl.ejdev.agent.infrastructure.pubmed.utils.orUnknown
 
 data class ArticleResponse(
     @field:JsonProperty("uid") var uid: String? = null,
@@ -49,4 +50,7 @@ data class ArticleResponse(
     @field:JsonProperty("sortpubdate") var sortpubdate: String? = null,
     @field:JsonProperty("sortfirstauthor") var sortfirstauthor: String? = null,
     @field:JsonProperty("vernaculartitle") var vernaculartitle: String? = null
-)
+) {
+
+    fun authorsToString() = this.authors.joinToString(", ") { it.name.orUnknown() }
+}

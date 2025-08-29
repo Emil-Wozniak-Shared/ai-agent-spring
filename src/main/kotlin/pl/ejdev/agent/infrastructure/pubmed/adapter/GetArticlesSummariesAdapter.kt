@@ -6,10 +6,10 @@ import org.springframework.web.client.body
 import pl.ejdev.agent.infrastructure.pubmed.dto.ArticleResponse
 import pl.ejdev.agent.infrastructure.pubmed.dto.GetArticleSummaryResponse
 import pl.ejdev.agent.infrastructure.pubmed.dto.GetArticlesSummariesEvent
-import pl.ejdev.agent.infrastructure.pubmed.port.out.search.articles.GetArticlesSummariesPort
+import pl.ejdev.agent.infrastructure.pubmed.port.out.search.articlesSummary.GetArticlesSummariesPort
 import pl.ejdev.agent.infrastructure.pubmed.service.PubmedRestClient
-import pl.ejdev.agent.infrastructure.pubmed.utils.DB_PUBMED
-import pl.ejdev.agent.infrastructure.pubmed.utils.RETURN_MODE_JSON
+import pl.ejdev.agent.infrastructure.pubmed.service.PubmedRestClient.Companion.EUtils
+import pl.ejdev.agent.infrastructure.pubmed.service.PubmedRestClient.Companion.Params
 import pl.ejdev.agent.utils.get
 import pl.ejdev.agent.utils.queryParams
 import pl.ejdev.agent.utils.uriEncode
@@ -21,10 +21,10 @@ class GetArticlesSummariesAdapter(
     override fun handle(event: GetArticlesSummariesEvent): List<ArticleResponse> {
         val ids = event.idList.joinToString(",")
         val getArticleSummaryResponse = pubmed.client
-            .get("/eutils/esummary.fcgi") {
+            .get(EUtils.SUMMARY) {
                 queryParams(
-                    DB_PUBMED,
-                    RETURN_MODE_JSON,
+                    Params.DB_PUBMED,
+                    Params.RETURN_MODE_JSON,
                     "id" to ids,
                     "email" to event.email.uriEncode(),
                 )
