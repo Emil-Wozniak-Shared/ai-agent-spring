@@ -1,10 +1,11 @@
-import org.jetbrains.kotlin.util.profile
+import com.github.gradle.node.npm.task.NpmTask
 
 plugins {
     kotlin("jvm") version "1.9.25"
     kotlin("plugin.spring") version "1.9.25"
     id("org.springframework.boot") version "3.5.4"
     id("io.spring.dependency-management") version "1.1.7"
+    id("com.github.node-gradle.node") version "7.0.1"
 }
 
 group = "pl.ejdev"
@@ -71,5 +72,54 @@ tasks.withType<Test> {
     maxHeapSize = "1G"
     testLogging {
         events("passed")
+    }
+}
+
+tasks.named<NpmTask>("npmInstall") {
+    dependsOn("nodeSetup")
+    args.set(listOf("install"))
+    workingDir.set(file("src/fe"))
+}
+
+tasks.register<NpmTask>("buildReact") {
+    description = "Build React application"
+    dependsOn("npmInstall")
+    args.set(listOf("run", "build"))
+    workingDir.set(file("src/fe"))
+
+    inputs.dir(file("src/fe/src"))
+    inputs.file(file("src/fe/package.json"))
+    inputs.file(file("src/fe/package-lock.json"))
+    outputs.dir(file("src/fe/build"))
+}
+
+tasks.register<NpmTask>("startReact") {
+    description = "Start React development server"
+    dependsOn("npmInstall")
+    args.set(listOf("start"))
+    workingDir.set(file("src/fe"))
+}
+
+tasks.register<Copy>("copyReactBuild") {
+    description = "Copy React build to static resources"
+    dependsOn("buildReact")
+
+    from(file("src/fe/build"))
+    into(file("src/main/resources/static"))
+
+    doFirst {
+        delete(file("src/main/resources/static"))
+    }
+}
+
+tasks.named("processResources") {
+    dependsOn("copyReactBuild")
+}
+
+tasks.named("clean") {
+    doLast {
+        delete(file("src/fe/build"))
+        delete(file("src/fe/node_modules"))
+        delete(file("src/main/resources/static"))
     }
 }
