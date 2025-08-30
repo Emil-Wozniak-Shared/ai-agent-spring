@@ -2,6 +2,7 @@ package pl.ejdev.agent.domain.pubmed
 
 import com.fasterxml.jackson.annotation.JsonProperty
 
+@Suppress("SpellCheckingInspection")
 data class ESearchResult(
     @field:JsonProperty("count") var count: String? = null,
     @field:JsonProperty("retmax") var retmax: String? = null,

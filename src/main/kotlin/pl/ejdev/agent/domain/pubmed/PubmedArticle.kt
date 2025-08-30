@@ -15,3 +15,4 @@ data class PubmedArticle(
     @field:JsonProperty("PubDate")
     val pubDate: String
 )
+

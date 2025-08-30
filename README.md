@@ -17,7 +17,10 @@ yay -S qdrant-bin
 1. Authenticate:
     ```bash
     http POST :8080/api/token <<<'{ "username": "user", "password": "password" }'
-    APP_TOKEN=$(http POST :8080/api/token <<<'{ "username": "user", "password": "password" }' | jq ".token" | sed 's/\"//')
+    # OR assign to a variable  
+    APP_TOKEN=$(http POST :8080/api/token Accept:application/json Content-Type:application/json \
+    <<<'{ "username": "user", "password": "password" }' \
+    | jq ".token" | sed 's/\"//')
     ```
 
 2. Add Documents:
@@ -84,6 +87,11 @@ yay -S qdrant-bin
     "email": "dummy@gmail.com",
     "maxResults": 5
     }'
+   ```
+8. Fetch Pubmed doc:
+   example ids: 40878788,40878787,40878773,40878772,40878768
+   ```bash
+    http POST :8080/api/pubmed/articles/40878788/abstract Content-Type:application/json "Authorization:Bearer ${APP_TOKEN}"
    ```
    
 ## Key Features of Updated Implementation:

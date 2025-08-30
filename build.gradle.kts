@@ -32,7 +32,9 @@ dependencies {
 
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+    implementation("com.fasterxml.jackson.core:jackson-core:2.20.0")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.20.0")
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
     implementation("io.qdrant:client:1.11.0")
 

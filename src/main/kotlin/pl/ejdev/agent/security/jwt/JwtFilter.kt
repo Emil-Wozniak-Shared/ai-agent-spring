@@ -7,7 +7,7 @@ import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.LoggerFactory
-import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
@@ -24,27 +24,27 @@ class JwtFilter(
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
-        log.info("Inside JWT filter")
         try {
             validate(request)
         } catch (e: ExpiredJwtException) {
-            log.error("Filter exception: ${e.message}")
-            request.setAttribute("exception", e)
+            e.logAndAttach(request)
         } catch (e: BadCredentialsException) {
-            log.error("Filter exception: ${e.message}")
-            request.setAttribute("exception", e)
+            e.logAndAttach(request)
         } catch (e: UnsupportedJwtException) {
-            log.error("Filter exception: ${e.message}")
-            request.setAttribute("exception", e)
+            e.logAndAttach(request)
         } catch (e: MalformedJwtException) {
-            log.error("Filter exception: ${e.message}")
-            request.setAttribute("exception", e)
+            e.logAndAttach(request)
         }
         filterChain.doFilter(request, response)
     }
 
+    fun RuntimeException.logAndAttach(request: HttpServletRequest) {
+        log.error("Filter exception: $message")
+        request.setAttribute("exception", this)
+    }
+
     private fun validate(request: HttpServletRequest) {
-        val authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION)
+        val authorizationHeader = request.getHeader(AUTHORIZATION)
         var jwt: String? = null
         var username: String? = null
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {

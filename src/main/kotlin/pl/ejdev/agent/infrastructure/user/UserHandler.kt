@@ -2,6 +2,7 @@ package pl.ejdev.agent.infrastructure.user
 
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.web.servlet.function.ServerRequest
 import org.springframework.web.servlet.function.ServerResponse
 import org.springframework.web.servlet.function.body
@@ -15,7 +16,7 @@ class UserHandler(private val userService: UserService) {
         return try {
             val users = userService.findAll()
             ServerResponse.ok()
-                .contentType(MediaType.APPLICATION_JSON)
+                .contentType(APPLICATION_JSON)
                 .body(users)
         } catch (e: Exception) {
             ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -32,7 +33,7 @@ class UserHandler(private val userService: UserService) {
             val user = userService.findById(id)
             if (user != null) {
                 ServerResponse.ok()
-                    .contentType(MediaType.APPLICATION_JSON)
+                    .contentType(APPLICATION_JSON)
                     .body(user)
             } else {
                 ServerResponse.notFound().build()
@@ -61,7 +62,7 @@ class UserHandler(private val userService: UserService) {
 
             val savedUser = userService.save(user)
             ServerResponse.status(HttpStatus.CREATED)
-                .contentType(MediaType.APPLICATION_JSON)
+                .contentType(APPLICATION_JSON)
                 .body(savedUser)
 
         } catch (e: Exception) {
@@ -87,7 +88,7 @@ class UserHandler(private val userService: UserService) {
 
             val savedUser = userService.save(updatedUser)
             ServerResponse.ok()
-                .contentType(MediaType.APPLICATION_JSON)
+                .contentType(APPLICATION_JSON)
                 .body(savedUser)
 
         } catch (e: Exception) {

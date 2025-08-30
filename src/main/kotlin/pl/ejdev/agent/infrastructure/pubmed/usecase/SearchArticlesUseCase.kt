@@ -6,7 +6,7 @@ import pl.ejdev.agent.infrastructure.pubmed.dto.ArticleResponse
 import pl.ejdev.agent.infrastructure.pubmed.dto.GetArticlesSummariesEvent
 import pl.ejdev.agent.infrastructure.pubmed.dto.SearchArticleResult
 import pl.ejdev.agent.infrastructure.pubmed.dto.SearchArticlesQuery
-import pl.ejdev.agent.infrastructure.pubmed.port.out.search.articlesSummary.GetArticlesSummariesPort
+import pl.ejdev.agent.infrastructure.pubmed.port.out.get.articlesSummary.GetArticlesSummariesPort
 import pl.ejdev.agent.infrastructure.pubmed.utils.orUnknown
 
 class SearchArticlesUseCase(

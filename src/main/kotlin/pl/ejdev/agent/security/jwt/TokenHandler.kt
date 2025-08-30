@@ -1,5 +1,6 @@
 package pl.ejdev.agent.security.jwt
 
+import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.web.servlet.function.ServerRequest
 import org.springframework.web.servlet.function.ServerResponse
 import org.springframework.web.servlet.function.body
@@ -10,5 +11,9 @@ class TokenHandler(
 ) {
     fun create(request: ServerRequest): ServerResponse = request.body<TokenRequest>()
         .let(tokenService::generateToken)
-        .let { ServerResponse.ok().body(it) }
+        .let {
+            ServerResponse.ok()
+                .contentType(APPLICATION_JSON)
+                .body(it)
+        }
 }

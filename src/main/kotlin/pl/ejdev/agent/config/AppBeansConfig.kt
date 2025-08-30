@@ -1,6 +1,5 @@
 package pl.ejdev.agent.config
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.springframework.beans.factory.support.DefaultListableBeanFactory
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration
@@ -15,6 +14,7 @@ import org.springframework.context.support.beans
 import org.springframework.core.env.get
 import org.springframework.http.HttpMethod.GET
 import org.springframework.http.HttpMethod.POST
+import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -25,6 +25,7 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import pl.ejdev.agent.domain.Authority.ADMIN
 import pl.ejdev.agent.infrastructure.documents.documentBeans
@@ -34,7 +35,9 @@ import pl.ejdev.agent.infrastructure.pubmed.pubmedBeans
 import pl.ejdev.agent.infrastructure.qdrant.qdrantBeans
 import pl.ejdev.agent.infrastructure.user.userBeans
 import pl.ejdev.agent.routes.routes
-import pl.ejdev.agent.security.*
+import pl.ejdev.agent.security.AppAuthenticationManager
+import pl.ejdev.agent.security.AppAuthenticationProvider
+import pl.ejdev.agent.security.UserDetailsServiceProvider
 import pl.ejdev.agent.security.jwt.JwtAuthenticationEntryPoint
 import pl.ejdev.agent.security.jwt.JwtFilter
 import pl.ejdev.agent.security.jwt.TokenHandler
@@ -44,6 +47,7 @@ object AppBeansConfig {
     val beans: BeanDefinitionDsl = beans {
         webServer()
         security()
+        utils()
         openAiBeans()
         qdrantBeans()
         documentBeans()
@@ -58,6 +62,13 @@ object AppBeansConfig {
         bean<BeanPostProcessorsRegistrar>()
         bean<DispatcherServletAutoConfiguration>()
         bean<WebMvcAutoConfiguration>()
+        bean<WebMvcConfigurer> {
+            object : WebMvcConfigurer {
+                override fun configureContentNegotiation(configurer: ContentNegotiationConfigurer) {
+                    configurer.defaultContentType(APPLICATION_JSON)
+                }
+            }
+        }
         bean<JacksonAutoConfiguration>()
         bean<DefaultListableBeanFactory>()
         bean { jacksonObjectMapper {} }
@@ -66,7 +77,7 @@ object AppBeansConfig {
 
     fun BeanDefinitionDsl.security() {
         bean<PasswordEncoder> { PasswordEncoderFactories.createDelegatingPasswordEncoder() }
-        bean<UserDetailsService> { UserDetailsServiceProvider(ref())}
+        bean<UserDetailsService> { UserDetailsServiceProvider(ref()) }
         bean<AuthenticationManager> { AppAuthenticationManager(ref()) }
         bean<AuthenticationProvider> { AppAuthenticationProvider(ref(), ref()) }
         bean<TokenService>()
@@ -80,9 +91,9 @@ object AppBeansConfig {
                 csrf { disable() }
                 sessionManagement { sessionCreationPolicy = STATELESS }
                 authorizeHttpRequests {
-                    authorize(GET,"/", permitAll)
+                    authorize(GET, "/", permitAll)
                     authorize(GET, "/login", permitAll)
-                    authorize(POST,"/api/token", permitAll)
+                    authorize(POST, "/api/token", permitAll)
                     authorize("/api/user/**", hasRole(ADMIN.name))
                     authorize("/api/documents/**", authenticated)
                     authorize(anyRequest, authenticated)
@@ -92,6 +103,10 @@ object AppBeansConfig {
             }
             httpSecurity.build()
         }
+    }
+
+    fun BeanDefinitionDsl.utils() {
+        bean<XmlParser>()
     }
 }
 

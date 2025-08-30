@@ -6,7 +6,7 @@ import org.springframework.web.client.body
 import pl.ejdev.agent.infrastructure.pubmed.dto.ArticleResponse
 import pl.ejdev.agent.infrastructure.pubmed.dto.GetArticleSummaryResponse
 import pl.ejdev.agent.infrastructure.pubmed.dto.GetArticlesSummariesEvent
-import pl.ejdev.agent.infrastructure.pubmed.port.out.search.articlesSummary.GetArticlesSummariesPort
+import pl.ejdev.agent.infrastructure.pubmed.port.out.get.articlesSummary.GetArticlesSummariesPort
 import pl.ejdev.agent.infrastructure.pubmed.service.PubmedRestClient
 import pl.ejdev.agent.infrastructure.pubmed.service.PubmedRestClient.Companion.EUtils
 import pl.ejdev.agent.infrastructure.pubmed.service.PubmedRestClient.Companion.Params

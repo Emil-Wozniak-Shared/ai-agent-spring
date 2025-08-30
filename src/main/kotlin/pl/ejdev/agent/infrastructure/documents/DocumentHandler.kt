@@ -1,5 +1,6 @@
 package pl.ejdev.agent.infrastructure.documents
 
+import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.web.servlet.function.ServerRequest
 import org.springframework.web.servlet.function.ServerResponse
 import org.springframework.web.servlet.function.body
@@ -18,12 +19,12 @@ class DocumentHandler(
         request.body<List<Document>>()
             .let(::CreateDocumentQuery)
             .runCatching { createDocumentUseCase.handle(this) }
-            .map { result -> ServerResponse.ok().body(result) }
+            .map { result -> ServerResponse.ok().contentType(APPLICATION_JSON).body(result) }
             .getOrElse { ServerResponse.badRequest().body(mapOf("error" to "Failed to add documents")) }
 
     fun search(request: ServerRequest): ServerResponse =
         request.body<SearchDocumentRequest>()
             .let { (query: String, limit: Int, threshold: Double) -> SearchDocumentQuery(query, limit, threshold) }
             .let(searchDocumentUseCase::handle)
-            .let { results -> ServerResponse.ok().body(results) }
+            .let { results -> ServerResponse.ok().contentType(APPLICATION_JSON).body(results) }
 }

@@ -19,7 +19,7 @@ fun BeanDefinitionDsl.routes() {
             userHandler = ref(),
             documentHandler = ref(),
             tokenHandler = ref(),
-            pubmedArticlesHandler = ref()
+            pubmedArticlesHandler = ref(),
         )
     }
 }
@@ -30,10 +30,10 @@ fun routerFunction(
     tokenHandler: TokenHandler,
     pubmedArticlesHandler: PubmedArticlesHandler,
 
-): RouterFunction<ServerResponse> = router {
+    ): RouterFunction<ServerResponse> = router {
     filter(RouterConfig::filter)
     filter(ExceptionHandlerFilter::filter)
-    "/api".nest {
+    ("/api" and accept(APPLICATION_JSON)).nest {
         "/users".nest {
             GET("", userHandler::getAllUsers)
             GET("/{id}", userHandler::getUserById)
@@ -47,8 +47,12 @@ fun routerFunction(
         ("/pubmed" and contentType(APPLICATION_JSON)).nest {
             POST("/search/articles", pubmedArticlesHandler::search)
             POST("/search/articles/{ids}", pubmedArticlesHandler::searchBy)
+            POST("/articles/{id}/abstract", pubmedArticlesHandler::abstract)
         }
-        POST("/token", tokenHandler::create)
+        ("/token" and contentType(APPLICATION_JSON)).nest {
+            POST(tokenHandler::create)
+        }
+
     }
     htmlRoutes()
 }

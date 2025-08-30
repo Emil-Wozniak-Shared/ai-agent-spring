@@ -14,10 +14,12 @@ data class PubmedRestClient(
         }
 
         object Params {
-            val DB_PUBMED: Pair<String, String> = "db" to "pubmed"
+            val DB_PUBMED: Pair<String, String> = "db" to DB_NAME
             val RETURN_MODE_JSON: Pair<String, String> = "retmode" to "json"
             val RETURN_MODE_TEXT: Pair<String, String> = "retmode" to "text"
             val RETURN_TYPE_FASTA: Pair<String, String> = "rettype" to "fasta"
         }
+
+        const val DB_NAME = "pubmed"
     }
 }

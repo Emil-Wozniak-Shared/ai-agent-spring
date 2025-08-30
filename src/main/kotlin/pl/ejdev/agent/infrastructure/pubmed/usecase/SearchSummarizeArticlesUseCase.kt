@@ -3,7 +3,7 @@ package pl.ejdev.agent.infrastructure.pubmed.usecase
 import pl.ejdev.agent.domain.pubmed.PubmedArticle
 import pl.ejdev.agent.infrastructure.base.usecase.UseCase
 import pl.ejdev.agent.infrastructure.pubmed.dto.*
-import pl.ejdev.agent.infrastructure.pubmed.port.out.search.articlesSummary.GetArticlesSummariesPort
+import pl.ejdev.agent.infrastructure.pubmed.port.out.get.articlesSummary.GetArticlesSummariesPort
 import pl.ejdev.agent.infrastructure.pubmed.port.out.search.articles.SearchArticlesPort
 import pl.ejdev.agent.infrastructure.pubmed.utils.orUnknown
 
@@ -14,7 +14,7 @@ class SearchSummarizeArticlesUseCase(
     override fun handle(query: SearchSummarizeArticlesQuery): SearchArticleResult = query
         .toEvent()
         .let { searchArticlesPort.handle(it) }
-        .let { GetArticlesSummariesEvent(it.esearchresult.idlist, query.email) }
+        .let { GetArticlesSummariesEvent(it.result.idlist, query.email) }
         .let { getArticlesSummariesPort.handle(it) }
         .map { it.toPubmedArticle() }
         .let { SearchArticleResult(it) }

@@ -3,6 +3,7 @@ package pl.ejdev.agent.security.jwt
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED
 import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.security.core.AuthenticationException
@@ -18,7 +19,7 @@ class JwtAuthenticationEntryPoint : AuthenticationEntryPoint {
         authException: AuthenticationException
     ) {
         val exception = request.getAttribute("exception") as Exception?
-        response.status = HttpServletResponse.SC_UNAUTHORIZED
+        response.status = SC_UNAUTHORIZED
         response.contentType = APPLICATION_JSON_VALUE
         log.error("Authentication Exception: $exception ")
         val data: MutableMap<String?, Any?> = HashMap()

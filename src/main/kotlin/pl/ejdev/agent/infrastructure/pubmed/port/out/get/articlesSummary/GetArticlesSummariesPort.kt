@@ -1,4 +1,4 @@
-package pl.ejdev.agent.infrastructure.pubmed.port.out.search.articlesSummary
+package pl.ejdev.agent.infrastructure.pubmed.port.out.get.articlesSummary
 
 import pl.ejdev.agent.infrastructure.base.port.Port
 import pl.ejdev.agent.infrastructure.pubmed.dto.ArticleResponse

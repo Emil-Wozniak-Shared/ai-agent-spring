@@ -1,7 +1,7 @@
 package pl.ejdev.agent.infrastructure.pubmed.adapter
 
 import org.springframework.web.client.body
-import pl.ejdev.agent.infrastructure.pubmed.dto.ESearchResultResponse
+import pl.ejdev.agent.domain.pubmed.ESearchResultResponse
 import pl.ejdev.agent.infrastructure.pubmed.dto.SearchArticlesEvent
 import pl.ejdev.agent.infrastructure.pubmed.port.out.search.articles.SearchArticlesPort
 import pl.ejdev.agent.infrastructure.pubmed.service.PubmedRestClient
