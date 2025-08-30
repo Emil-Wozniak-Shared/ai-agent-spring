@@ -102,7 +102,7 @@ tasks.register<NpmTask>("startReact") {
 
 tasks.register<Copy>("copyReactBuild") {
     description = "Copy React build to static resources"
-    dependsOn("buildReact")
+//    dependsOn("buildReact") // FIXME
 
     from(file("src/fe/build"))
     into(file("src/main/resources/static"))

@@ -34,6 +34,9 @@ fun routerFunction(
     filter(RouterConfig::filter)
     filter(ExceptionHandlerFilter::filter)
     ("/api" and accept(APPLICATION_JSON)).nest {
+        GET("/health") {
+            ServerResponse.ok().contentType(APPLICATION_JSON).body("UP")
+        }
         "/users".nest {
             GET("", userHandler::getAllUsers)
             GET("/{id}", userHandler::getUserById)
@@ -52,7 +55,6 @@ fun routerFunction(
         ("/token" and contentType(APPLICATION_JSON)).nest {
             POST(tokenHandler::create)
         }
-
     }
     htmlRoutes()
 }

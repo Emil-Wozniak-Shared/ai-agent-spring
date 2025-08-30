@@ -92,6 +92,7 @@ object AppBeansConfig {
                 sessionManagement { sessionCreationPolicy = STATELESS }
                 authorizeHttpRequests {
                     authorize(GET, "/", permitAll)
+                    authorize(GET, "/health", permitAll)
                     authorize(GET, "/login", permitAll)
                     authorize(POST, "/api/token", permitAll)
                     authorize("/api/user/**", hasRole(ADMIN.name))
