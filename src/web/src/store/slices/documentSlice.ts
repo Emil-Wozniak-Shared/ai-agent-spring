@@ -2,9 +2,8 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 export interface Document {
   id: string;
-  title: string;
-  content: string;
-  createdAt: string;
+  text: string;
+  metadata: object;
 }
 
 interface DocumentState {

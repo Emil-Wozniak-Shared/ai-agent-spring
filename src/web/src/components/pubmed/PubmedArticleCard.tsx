@@ -12,6 +12,8 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
+import { createManyDocuments } from "~/store/slices/documentSlice";
+import { addNotification } from "~/store/slices/appSlice";
 
 type Props = {
   article: PubmedArticle;
@@ -21,6 +23,7 @@ type Props = {
 const PubmedArticleCard: FC<Props> = ({ article, id }) => {
   const dispatch = useAppDispatch();
   const { currentArticle } = useAppSelector((state) => state.pubmed);
+
   return (
     <Card key={article.id ?? id} className="article-card w-full max-w-sm">
       <CardHeader>
