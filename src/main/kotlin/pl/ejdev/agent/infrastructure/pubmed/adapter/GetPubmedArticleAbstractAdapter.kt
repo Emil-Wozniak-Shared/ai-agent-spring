@@ -29,8 +29,8 @@ class GetPubmedArticleAbstractAdapter(
 
         return body.pubmedArticle.medlineCitation.article.run {
             GetPubmedArticleAbstractResult(
-                articleTitle,
-                abstract?.abstractText,
+                title = articleTitle,
+                abstract = abstract?.abstractText,
             )
         }
     }

@@ -11,7 +11,9 @@ export const Layout: FC = () => (
     <div className="flex-1 flex flex-col items-center gap-16 min-h-0">
       <Navbar />
       <div className="m-auto w-full space-y-6 px-4">
-        <Outlet />
+        <div className="container flex flex-col items-center justify-center">
+          <Outlet />
+        </div>
       </div>
     </div>
   </main>

@@ -21,6 +21,7 @@ class SearchArticlesUseCase(
 }
 
 private fun ArticleResponse.toPubmedArticle() = PubmedArticle(
+    id = uid,
     title = title.orUnknown(),
     authors = authorsToString(),
     source = source.orUnknown(),

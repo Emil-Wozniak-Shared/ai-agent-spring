@@ -9,8 +9,8 @@ export interface PubmedArticle {
   title: string;
   authors: string[];
   abstract?: string;
-  publishedDate: string;
-  journal: string;
+  pubDate: string;
+  source: string;
   doi?: string;
 }
 
@@ -28,12 +28,15 @@ const initialState: PubmedState = {
   error: null,
 };
 
+type SearchPubmedArticlesParams = {
+  query: string;
+  email: string;
+  maxResults?: number;
+};
+
 export const searchPubmedArticles = createAsyncThunk(
   "pubmed/searchArticles",
-  async (
-    searchParams: { query: string; limit?: number },
-    { rejectWithValue },
-  ) => {
+  async (searchParams: SearchPubmedArticlesParams, { rejectWithValue }) => {
     try {
       const response = await fetch("/api/pubmed/search/articles", {
         method: "POST",
@@ -41,7 +44,8 @@ export const searchPubmedArticles = createAsyncThunk(
         body: JSON.stringify(searchParams),
       });
       if (!response.ok) throw new Error("Pubmed search failed");
-      return await response.json();
+      const json = await response.json();
+      return json.articles;
     } catch (error) {
       return rejectWithValue(
         error instanceof Error ? error.message : "Unknown error",
@@ -85,7 +89,9 @@ export const fetchArticleAbstract = createAsyncThunk(
         },
       );
       if (!response.ok) throw new Error("Failed to fetch abstract");
-      return await response.text();
+      const json = await response.json();
+      console.log("abstract", articleId, json.abstract);
+      return json.abstract;
     } catch (error) {
       return rejectWithValue(
         error instanceof Error ? error.message : "Unknown error",

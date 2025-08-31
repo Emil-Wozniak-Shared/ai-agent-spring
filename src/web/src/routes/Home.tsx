@@ -9,6 +9,8 @@ import {
 } from "../store/slices/userSlice";
 import { addNotification } from "~/store/slices/appSlice";
 import UserCard from "~/components/user/UserCard";
+import { Button } from "~/components/ui/button";
+import CreateNewUser from "~/components/user/CreateUser";
 
 const Home: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -19,29 +21,6 @@ const Home: React.FC = () => {
   React.useEffect(() => {
     dispatch(fetchAllUsers());
   }, [dispatch]);
-
-  const handleCreateUser = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newUser.name || !newUser.email) return;
-
-    try {
-      await dispatch(createUser(newUser)).unwrap();
-      setNewUser(emptyUser);
-      dispatch(
-        addNotification({
-          message: "User created successfully!",
-          type: "success",
-        }),
-      );
-    } catch (error) {
-      dispatch(
-        addNotification({
-          message: "Failed to create user",
-          type: "error",
-        }),
-      );
-    }
-  };
 
   const handleUpdateUser = async (id: number, userData: User) => {
     try {
@@ -66,29 +45,7 @@ const Home: React.FC = () => {
   return (
     <div className="page">
       <h1>Dashboard</h1>
-
-      <div className="dashboard-section">
-        <h2>Create New User</h2>
-        <form onSubmit={handleCreateUser} className="user-form">
-          <input
-            type="text"
-            placeholder="Name"
-            value={newUser.name}
-            onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
-            required
-          />
-          <input
-            type="email"
-            placeholder="Email"
-            value={newUser.email}
-            onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
-            required
-          />
-          <button type="submit" disabled={loading}>
-            {loading ? "Creating..." : "Create User"}
-          </button>
-        </form>
-      </div>
+      <CreateNewUser />
 
       <div className="dashboard-section">
         <h2>Users ({users.length})</h2>
@@ -99,7 +56,7 @@ const Home: React.FC = () => {
         {error && <div className="error-message">{error}</div>}
 
         {
-          <div className="users-grid">
+          <div>
             {users.map((user) => {
               return (
                 <UserCard

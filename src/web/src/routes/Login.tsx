@@ -6,6 +6,9 @@ import {
   clearToken,
 } from "../store/slices/tokenSlice";
 import { addNotification } from "~/store/slices/appSlice";
+import { Label } from "@radix-ui/react-label";
+import { Input } from "~/components/ui/input";
+import { Button } from "~/components/ui/button";
 
 const Login: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -49,29 +52,29 @@ const Login: React.FC = () => {
 
   if (token) {
     return (
-      <div className="page">
-        <h1>Authentication</h1>
-        <div className="auth-section">
-          <p className="success-message">✅ You are logged in!</p>
-          <p>
+      <>
+        <h1 className="text-4xl font-bold mb-4">Authentication</h1>
+        <div className="my-4">
+          <p>✅ You are logged in!</p>
+          <p className="mb-4">
             <strong>Token:</strong> {token.substring(0, 20)}...
           </p>
-          <button onClick={handleLogout} className="logout-btn">
-            Logout
-          </button>
+          <Button onClick={handleLogout}>Logout</Button>
         </div>
-      </div>
+      </>
     );
   }
 
   return (
-    <div className="page">
-      <h1>Login</h1>
-
-      <form onSubmit={handleLogin} className="login-form">
-        <div className="form-group">
-          <label htmlFor="username">Username:</label>
-          <input
+    <>
+      <h1 className="text-4xl font-bold mb-4">Login</h1>
+      <form
+        onSubmit={handleLogin}
+        className="shadow-md rounded px-8 pt-6 pb-8 mb-4"
+      >
+        <div className="mb-6">
+          <Label htmlFor="username">Username:</Label>
+          <Input
             id="username"
             type="text"
             value={credentials.username}
@@ -79,12 +82,13 @@ const Login: React.FC = () => {
               setCredentials({ ...credentials, username: e.target.value })
             }
             required
+            className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight shadow-outline"
           />
         </div>
 
-        <div className="form-group">
-          <label htmlFor="password">Password:</label>
-          <input
+        <div className="mb-6">
+          <Label htmlFor="password">Password:</Label>
+          <Input
             id="password"
             type="password"
             value={credentials.password}
@@ -92,21 +96,22 @@ const Login: React.FC = () => {
               setCredentials({ ...credentials, password: e.target.value })
             }
             required
+            className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight shadow-outline"
           />
         </div>
 
-        <button type="submit" disabled={loading}>
+        <Button type="submit" disabled={loading} variant="outline">
           {loading ? "Logging in..." : "Login"}
-        </button>
+        </Button>
 
         {error && (
-          <div className="error-message">
+          <div className="text-red-500">
             {error}
             <button onClick={() => dispatch(clearError())}>×</button>
           </div>
         )}
       </form>
-    </div>
+    </>
   );
 };
 

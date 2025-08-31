@@ -21,6 +21,7 @@ class SearchSummarizeArticlesUseCase(
 }
 
 private fun ArticleResponse.toPubmedArticle(): PubmedArticle = PubmedArticle(
+    id = uid,
     title = title.orUnknown(),
     authors = this.authorsToString(),
     source = source.orUnknown(),

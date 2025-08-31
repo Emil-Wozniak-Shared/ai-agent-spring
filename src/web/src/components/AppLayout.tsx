@@ -37,7 +37,9 @@ const AppLayout: React.FC<LayoutProps> = () => {
     >
       <Navbar />
       <main className="container mx-auto max-w-[85rem] px-4 sm:px-6 lg:px-8 min-h-fit">
-        <Outlet />
+        <div className="container flex flex-col items-center justify-center">
+          <Outlet />
+        </div>
       </main>
       <NotificationCenter />
       <footer className="h-10">
