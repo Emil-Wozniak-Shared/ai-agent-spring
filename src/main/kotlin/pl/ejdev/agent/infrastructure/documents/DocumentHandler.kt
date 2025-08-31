@@ -24,7 +24,11 @@ class DocumentHandler(
 
     fun search(request: ServerRequest): ServerResponse =
         request.body<SearchDocumentRequest>()
-            .let { (query: String, limit: Int, threshold: Double) -> SearchDocumentQuery(query, limit, threshold) }
+            .let { (query: String, limit: Int, threshold: Double, keywords) ->
+                SearchDocumentQuery(query, limit, threshold, keywords.map {
+                    SearchDocumentQuery.Keyword(it.key, it.value)
+                })
+            }
             .let(searchDocumentUseCase::handle)
             .let { results -> ServerResponse.ok().contentType(APPLICATION_JSON).body(results) }
 }

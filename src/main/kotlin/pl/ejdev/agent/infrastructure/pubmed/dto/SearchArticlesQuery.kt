@@ -1,6 +1,7 @@
 package pl.ejdev.agent.infrastructure.pubmed.dto
 
 import org.springframework.web.servlet.function.ServerRequest
+import org.springframework.web.servlet.function.body
 import kotlin.jvm.optionals.getOrElse
 
 data class SearchArticlesQuery(

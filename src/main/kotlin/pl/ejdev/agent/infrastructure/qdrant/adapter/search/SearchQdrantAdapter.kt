@@ -8,17 +8,22 @@ import pl.ejdev.agent.infrastructure.qdrant.dto.SearchQdrantResult
 import pl.ejdev.agent.infrastructure.qdrant.port.out.SearchQdrantPort
 
 class SearchQdrantAdapter(
-    private val vectorStore: VectorStore
+    private val vectorStore: VectorStore,
 ) : SearchQdrantPort {
     private val logger = LoggerFactory.getLogger(this::class.java)
-
-    override fun handle(event: SearchQdrantEvent): SearchQdrantResult =
-        SearchRequest.builder()
+// Adv Exp Med Biol
+    override fun handle(event: SearchQdrantEvent): SearchQdrantResult {
+        return SearchRequest.builder()
             .query(event.query)
             .topK(event.limit)
+            .apply {
+                val expression = event.keywords.joinToString(" && ") { "${it.key} == '${it.value}'" }
+                filterExpression(expression)
+            }
             .similarityThreshold(event.threshold)
             .build()
             .also { logger.info("Search Qdrant: $it") }
             .let(vectorStore::similaritySearch)
             .let(::SearchQdrantResult)
+    }
 }

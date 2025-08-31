@@ -72,7 +72,7 @@ abstract class BaseMvcTest {
         bean<QdrantGrpcClient> { qdrantGrpcClient }
         bean<QdrantClient> { qdrantClient }
         bean<VectorStore> { vectorStore }
-        bean<SearchQdrantPort> { SearchQdrantAdapter(ref()) }
+        bean<SearchQdrantPort> { SearchQdrantAdapter(ref(), ref(), ref()) }
         bean<CreateQdrantPort> { CreateQdrantAdapter(ref()) }
         bean<CreateQdrantUseCase> { CreateQdrantUseCase(ref()) }
         bean<SearchQdrantUseCase> { SearchQdrantUseCase(ref()) }

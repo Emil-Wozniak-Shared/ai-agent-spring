@@ -7,4 +7,10 @@ data class SearchQdrantEvent(
     val query: String = "",
     val threshold: Double = 0.0,
     val limit: Int = DEFAULT_TOP_K,
-)
+    val keywords: List<Keyword> = listOf()
+) {
+    data class Keyword(
+        val key: String,
+        val value: String
+    )
+}

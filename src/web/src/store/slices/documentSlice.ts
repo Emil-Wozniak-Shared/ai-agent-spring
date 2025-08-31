@@ -48,17 +48,26 @@ export const createManyDocuments = createAsyncThunk(
 export const searchDocuments = createAsyncThunk(
   "documents/search",
   async (
-    searchQuery: { query: string; filters?: any },
+    searchQuery: { query: string; source: string },
     { rejectWithValue },
   ) => {
     try {
+      const payload = {
+        query: searchQuery.query,
+        keywords: [
+          {
+            key: "source",
+            value: searchQuery.source,
+          },
+        ],
+      };
       const response = await fetch("/api/documents/search", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
         },
-        body: JSON.stringify(searchQuery),
+        body: JSON.stringify(payload),
       });
       if (!response.ok) throw new Error("Search failed");
       return await response.json();

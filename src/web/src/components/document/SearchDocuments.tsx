@@ -8,11 +8,13 @@ import {
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Label } from "../ui/label";
 
 const SearchDocuments = () => {
   const dispatch = useAppDispatch();
   const { searchResults, loading } = useAppSelector((state) => state.documents);
   const [searchQuery, setSearchQuery] = React.useState("");
+  const [searchSource, setSearchSource] = React.useState("");
   const [newDocs, setNewDocs] = React.useState([{ text: "", metadata: "" }]);
 
   const handleSearch = async (e: React.FormEvent) => {
@@ -20,7 +22,9 @@ const SearchDocuments = () => {
     if (!searchQuery.trim()) return;
 
     try {
-      await dispatch(searchDocuments({ query: searchQuery })).unwrap();
+      await dispatch(
+        searchDocuments({ query: searchQuery, source: searchSource }),
+      ).unwrap();
       dispatch(
         addNotification({
           message: "Search completed successfully!",
@@ -44,11 +48,21 @@ const SearchDocuments = () => {
         className="shadow rounded px-8 pt-6 pb-8 mb-4"
       >
         <div className="w-full flex flex-row">
+          <Label htmlFor="search-query">Search title:</Label>
           <Input
             type="text"
-            placeholder="Search query..."
+            placeholder="query..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            required
+            className="mr-2"
+          />
+          <Label htmlFor="search-source">source:</Label>
+          <Input
+            type="text"
+            placeholder="source ..."
+            value={searchSource}
+            onChange={(e) => setSearchSource(e.target.value)}
             required
             className="mr-2"
           />

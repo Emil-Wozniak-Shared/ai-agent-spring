@@ -19,7 +19,10 @@ class SearchDocumentUseCase(
     private fun SearchDocumentQuery.toEvent(): SearchQdrantEvent = SearchQdrantEvent(
         query = query,
         limit = limit,
-        threshold = threshold
+        threshold = threshold,
+        keywords = keywords.map {
+            SearchQdrantEvent.Keyword(it.key, it.value)
+        }
     )
 
     private fun Document.toDocumentResult(): SearchDocumentResult = SearchDocumentResult(
