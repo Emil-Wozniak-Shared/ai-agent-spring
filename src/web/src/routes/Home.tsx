@@ -4,13 +4,16 @@ import {
   fetchAllUsers,
   createUser,
   updateUser,
+  type User,
+  emptyUser,
 } from "../store/slices/userSlice";
 import { addNotification } from "~/store/slices/appSlice";
+import UserCard from "~/components/user/UserCard";
 
 const Home: React.FC = () => {
   const dispatch = useAppDispatch();
   const { users, loading, error } = useAppSelector((state) => state.users);
-  const [newUser, setNewUser] = React.useState({ name: "", email: "" });
+  const [newUser, setNewUser] = React.useState<User>(emptyUser);
   const [editingUser, setEditingUser] = React.useState<number | null>(null);
 
   React.useEffect(() => {
@@ -23,7 +26,7 @@ const Home: React.FC = () => {
 
     try {
       await dispatch(createUser(newUser)).unwrap();
-      setNewUser({ name: "", email: "" });
+      setNewUser(emptyUser);
       dispatch(
         addNotification({
           message: "User created successfully!",
@@ -40,10 +43,7 @@ const Home: React.FC = () => {
     }
   };
 
-  const handleUpdateUser = async (
-    id: number,
-    userData: { name: string; email: string },
-  ) => {
+  const handleUpdateUser = async (id: number, userData: User) => {
     try {
       await dispatch(updateUser({ id, userData })).unwrap();
       setEditingUser(null);
@@ -100,75 +100,23 @@ const Home: React.FC = () => {
 
         {
           <div className="users-grid">
-            {users.map((user) => (
-              <UserCard
-                key={user.id}
-                user={user}
-                isEditing={editingUser === user.id}
-                onEdit={() => setEditingUser(user.id)}
-                onSave={(userData) => handleUpdateUser(user.id, userData)}
-                onCancel={() => setEditingUser(null)}
-              />
-            ))}
+            {users.map((user) => {
+              return (
+                <UserCard
+                  key={user.id}
+                  user={user}
+                  isEditing={editingUser === user.id}
+                  onEdit={() => setEditingUser(user.id!!)}
+                  onSave={(userData) => handleUpdateUser(user.id!!, userData)}
+                  onCancel={() => setEditingUser(null)}
+                />
+              );
+            })}
           </div>
         }
       </div>
     </div>
   );
-
-  interface UserCardProps {
-    user: { id: number; name: string; email: string };
-    isEditing: boolean;
-    onEdit: () => void;
-    onSave: (userData: { name: string; email: string }) => void;
-    onCancel: () => void;
-  }
-
-  const UserCard: React.FC<UserCardProps> = ({
-    user,
-    isEditing,
-    onEdit,
-    onSave,
-    onCancel,
-  }) => {
-    const [editData, setEditData] = React.useState({
-      name: user.name,
-      email: user.email,
-    });
-
-    const handleSave = () => {
-      onSave(editData);
-    };
-
-    if (isEditing) {
-      return (
-        <div className="user-card editing">
-          <input
-            value={editData.name}
-            onChange={(e) => setEditData({ ...editData, name: e.target.value })}
-          />
-          <input
-            value={editData.email}
-            onChange={(e) =>
-              setEditData({ ...editData, email: e.target.value })
-            }
-          />
-          <div className="card-actions">
-            <button onClick={handleSave}>Save</button>
-            <button onClick={onCancel}>Cancel</button>
-          </div>
-        </div>
-      );
-    }
-
-    return (
-      <div className="user-card">
-        <h3>{user.name}</h3>
-        <p>{user.email}</p>
-        <button onClick={onEdit}>Edit</button>
-      </div>
-    );
-  };
 };
 
 export default Home;

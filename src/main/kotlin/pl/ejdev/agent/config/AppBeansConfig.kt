@@ -25,6 +25,8 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import pl.ejdev.agent.domain.Authority.ADMIN
@@ -85,6 +87,9 @@ object AppBeansConfig {
         bean<JwtAuthenticationEntryPoint>()
         bean<SecurityAutoConfiguration>()
         bean<UserDetailsServiceAutoConfiguration>()
+        bean<SecurityContextLogoutHandler> {
+            SecurityContextLogoutHandler()
+        }
         bean<SecurityFilterChain> {
             val httpSecurity = ref<HttpSecurity>()
             httpSecurity {
@@ -98,6 +103,11 @@ object AppBeansConfig {
                     authorize("/api/user/**", hasRole(ADMIN.name))
                     authorize("/api/documents/**", authenticated)
                     authorize(anyRequest, authenticated)
+                }
+                logout {
+                    logoutSuccessHandler = HttpStatusReturningLogoutSuccessHandler()
+                    logoutSuccessUrl = "/"
+                    permitAll = true
                 }
                 addFilterBefore<UsernamePasswordAuthenticationFilter>(JwtFilter(ref()))
                 exceptionHandling { authenticationEntryPoint = ref<JwtAuthenticationEntryPoint>() }

@@ -1,6 +1,10 @@
 import React from "react";
 import { useAppSelector, useAppDispatch } from "~/store/hooks";
-import { createToken, clearError } from "../store/slices/tokenSlice";
+import {
+  createToken,
+  clearError,
+  clearToken,
+} from "../store/slices/tokenSlice";
 import { addNotification } from "~/store/slices/appSlice";
 
 const Login: React.FC = () => {

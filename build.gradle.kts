@@ -78,33 +78,33 @@ tasks.withType<Test> {
 tasks.named<NpmTask>("npmInstall") {
     dependsOn("nodeSetup")
     args.set(listOf("install"))
-    workingDir.set(file("src/fe"))
+    workingDir.set(file("src/web"))
 }
 
 tasks.register<NpmTask>("buildReact") {
     description = "Build React application"
     dependsOn("npmInstall")
     args.set(listOf("run", "build"))
-    workingDir.set(file("src/fe"))
+    workingDir.set(file("src/web"))
 
-    inputs.dir(file("src/fe/src"))
-    inputs.file(file("src/fe/package.json"))
-    inputs.file(file("src/fe/package-lock.json"))
-    outputs.dir(file("src/fe/build"))
+    inputs.dir(file("src/web/src"))
+    inputs.file(file("src/web/package.json"))
+    inputs.file(file("src/web/package-lock.json"))
+    outputs.dir(file("src/web/build"))
 }
 
 tasks.register<NpmTask>("startReact") {
     description = "Start React development server"
     dependsOn("npmInstall")
     args.set(listOf("start"))
-    workingDir.set(file("src/fe"))
+    workingDir.set(file("src/web"))
 }
 
 tasks.register<Copy>("copyReactBuild") {
     description = "Copy React build to static resources"
 //    dependsOn("buildReact") // FIXME
 
-    from(file("src/fe/build"))
+    from(file("src/web/build"))
     into(file("src/main/resources/static"))
 
     doFirst {
@@ -118,8 +118,8 @@ tasks.named("processResources") {
 
 tasks.named("clean") {
     doLast {
-        delete(file("src/fe/build"))
-        delete(file("src/fe/node_modules"))
+        delete(file("src/web/build"))
+        delete(file("src/web/node_modules"))
         delete(file("src/main/resources/static"))
     }
 }

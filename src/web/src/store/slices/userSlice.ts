@@ -1,10 +1,30 @@
-import { createSlice, createAsyncThunk, type PayloadAction } from '@reduxjs/toolkit';
+import {
+  createSlice,
+  createAsyncThunk,
+  type PayloadAction,
+} from "@reduxjs/toolkit";
 
 export interface User {
-  id: number;
+  id?: number | null;
   name: string;
   email: string;
+  hashPassword: string;
+  active: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  roles: string[];
 }
+
+export const emptyUser: User = {
+  id: null,
+  name: "",
+  email: "",
+  hashPassword: "",
+  active: true,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  roles: ["user"],
+} as User;
 
 interface UserState {
   users: User[];
@@ -21,77 +41,88 @@ const initialState: UserState = {
 };
 
 export const fetchAllUsers = createAsyncThunk(
-  'users/fetchAll',
+  "users/fetchAll",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await fetch('/api/users', {
-        headers: { 'Accept': 'application/json' }
+      const response = await fetch("/api/users", {
+        headers: { Accept: "application/json" },
       });
-      if (!response.ok) throw new Error('Failed to fetch users');
+      if (!response.ok) throw new Error("Failed to fetch users");
       return await response.json();
     } catch (error) {
-      return rejectWithValue(error instanceof Error ? error.message : 'Unknown error');
+      return rejectWithValue(
+        error instanceof Error ? error.message : "Unknown error",
+      );
     }
-  }
+  },
 );
 
 export const fetchUserById = createAsyncThunk(
-  'users/fetchById',
+  "users/fetchById",
   async (id: number, { rejectWithValue }) => {
     try {
       const response = await fetch(`/api/users/${id}`, {
-        headers: { 'Accept': 'application/json' }
+        headers: { Accept: "application/json" },
       });
-      if (!response.ok) throw new Error('User not found');
+      if (!response.ok) throw new Error("User not found");
       return await response.json();
     } catch (error) {
-      return rejectWithValue(error instanceof Error ? error.message : 'Unknown error');
+      return rejectWithValue(
+        error instanceof Error ? error.message : "Unknown error",
+      );
     }
-  }
+  },
 );
 
 export const createUser = createAsyncThunk(
-  'users/create',
-  async (userData: Omit<User, 'id'>, { rejectWithValue }) => {
+  "users/create",
+  async (userData: Omit<User, "id">, { rejectWithValue }) => {
     try {
-      const response = await fetch('/api/users', {
-        method: 'POST',
+      const response = await fetch("/api/users", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
+          "Content-Type": "application/json",
+          Accept: "application/json",
         },
         body: JSON.stringify(userData),
       });
-      if (!response.ok) throw new Error('Failed to create user');
+      if (!response.ok) throw new Error("Failed to create user");
       return await response.json();
     } catch (error) {
-      return rejectWithValue(error instanceof Error ? error.message : 'Unknown error');
+      return rejectWithValue(
+        error instanceof Error ? error.message : "Unknown error",
+      );
     }
-  }
+  },
 );
 
 export const updateUser = createAsyncThunk(
-  'users/update',
-  async ({ id, userData }: { id: number; userData: Partial<User> }, { rejectWithValue }) => {
+  "users/update",
+  async (
+    { id, userData }: { id: number; userData: Partial<User> },
+    { rejectWithValue },
+  ) => {
     try {
       const response = await fetch(`/api/users/${id}`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
+          "Content-Type": "application/json",
+          Accept: "application/json",
         },
         body: JSON.stringify(userData),
       });
-      if (!response.ok) throw new Error('Failed to update user');
+      if (!response.ok) throw new Error("Failed to update user");
       return await response.json();
     } catch (error) {
-      return rejectWithValue(error instanceof Error ? error.message : 'Unknown error');
+      return rejectWithValue(
+        error instanceof Error ? error.message : "Unknown error",
+      );
     }
-  }
+  },
 );
 
 const userSlice = createSlice({
-  name: 'users',
+  name: "users",
   initialState,
   reducers: {
     clearError: (state) => {
@@ -149,7 +180,9 @@ const userSlice = createSlice({
       })
       .addCase(updateUser.fulfilled, (state, action) => {
         state.loading = false;
-        const index = state.users.findIndex(user => user.id === action.payload.id);
+        const index = state.users.findIndex(
+          (user) => user.id === action.payload.id,
+        );
         if (index !== -1) {
           state.users[index] = action.payload;
         }

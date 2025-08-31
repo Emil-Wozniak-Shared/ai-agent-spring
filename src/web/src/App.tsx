@@ -15,10 +15,12 @@ import "./app.css";
 import Documents from "./routes/Documents";
 import PubmedSearch from "./routes/PubmedSearch";
 import Login from "./routes/Login";
+import { RouteErrorElement } from "./components/ErrorBoundary";
 
 const router = createBrowserRouter([
   {
     element: <AppLayout />,
+    errorElement: <RouteErrorElement />,
     children: [
       { path: "/", element: <Home /> },
       { path: "/documents", element: <Documents /> },
