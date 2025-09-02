@@ -1,0 +1,20 @@
+package pl.ejdev.agent.infrastructure.user.dao
+
+import org.jetbrains.exposed.v1.core.Table
+import org.jetbrains.exposed.v1.core.VarCharColumnType
+import org.jetbrains.exposed.v1.javatime.JavaLocalDateTimeColumnType
+
+const val MAX_VARCHAR_LENGTH = 255
+
+object UserTable : Table(name = "app_user") {
+    val id = long("id").autoIncrement()
+    val name = varchar("name", MAX_VARCHAR_LENGTH)
+    val password = varchar("password", MAX_VARCHAR_LENGTH)
+    val active = bool("active").default(false)
+    val createdAt = registerColumn("created_at", JavaLocalDateTimeColumnType())
+    val updatedAt = registerColumn("updated_at", JavaLocalDateTimeColumnType())
+    val roles = array("roles", VarCharColumnType())
+
+    override val primaryKey: PrimaryKey = PrimaryKey(id)
+}
+

@@ -11,7 +11,7 @@ class SearchQdrantAdapter(
     private val vectorStore: VectorStore,
 ) : SearchQdrantPort {
     private val logger = LoggerFactory.getLogger(this::class.java)
-// Adv Exp Med Biol
+
     override fun handle(event: SearchQdrantEvent): SearchQdrantResult {
         return SearchRequest.builder()
             .query(event.query)

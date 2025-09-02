@@ -1,7 +1,6 @@
 package pl.ejdev.agent.config
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import org.springframework.beans.factory.support.DefaultListableBeanFactory
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
 import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
@@ -14,7 +13,6 @@ import org.springframework.context.support.beans
 import org.springframework.core.env.get
 import org.springframework.http.HttpMethod.GET
 import org.springframework.http.HttpMethod.POST
-import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -27,8 +25,8 @@ import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler
-import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
+import pl.ejdev.agent.config.web.AppWebMvcConfigurer
 import pl.ejdev.agent.domain.Authority.ADMIN
 import pl.ejdev.agent.infrastructure.documents.documentBeans
 import pl.ejdev.agent.infrastructure.embedding.embeddingBeans
@@ -47,9 +45,10 @@ import pl.ejdev.agent.security.jwt.TokenService
 
 object AppBeansConfig {
     val beans: BeanDefinitionDsl = beans {
-        webServer()
-        security()
         utils()
+        webServer()
+        dbConfiguration()
+        security()
         openAiBeans()
         qdrantBeans()
         documentBeans()
@@ -64,15 +63,7 @@ object AppBeansConfig {
         bean<BeanPostProcessorsRegistrar>()
         bean<DispatcherServletAutoConfiguration>()
         bean<WebMvcAutoConfiguration>()
-        bean<WebMvcConfigurer> {
-            object : WebMvcConfigurer {
-                override fun configureContentNegotiation(configurer: ContentNegotiationConfigurer) {
-                    configurer.defaultContentType(APPLICATION_JSON)
-                }
-            }
-        }
         bean<JacksonAutoConfiguration>()
-        bean<DefaultListableBeanFactory>()
         bean { jacksonObjectMapper {} }
         bean<WebMvcConfigurer> { AppWebMvcConfigurer() }
     }
@@ -115,9 +106,10 @@ object AppBeansConfig {
             httpSecurity.build()
         }
     }
-
     fun BeanDefinitionDsl.utils() {
         bean<XmlParser>()
+
     }
+
 }
 

@@ -1,60 +1,37 @@
 package pl.ejdev.agent.infrastructure.user.adapter
 
 import org.springframework.security.core.userdetails.User.builder
-import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.crypto.password.PasswordEncoder
 import pl.ejdev.agent.domain.Authority
 import pl.ejdev.agent.domain.User
-import pl.ejdev.agent.infrastructure.user.port.out.UserDao
+import pl.ejdev.agent.infrastructure.user.port.out.UserRepository
 
 class UserAuthenticationService(
-    private val passwordEncoder: PasswordEncoder
-): UserDao {
-    private val users: MutableMap<Long, UserDetails> = mutableMapOf()
+    private val passwordEncoder: PasswordEncoder,
+    private val userRepository: UserRepository
+) {
     init {
         builder()
             .username("user")
             .password(passwordEncoder.encode("password"))
             .roles("USER")
             .build()
-            .let { users.put(0, it) }
 
         builder()
             .username("admin")
             .password(passwordEncoder.encode("admin"))
             .roles("ADMIN")
             .build()
-            .let { users.put(1, it) }
-
-    }
-    override fun findAll(): List<User> = users.map { (id, user) ->
-        User(
-            id,
-            user.username,
-            hashPassword = user.password,
-            roles = user.authorities.map { Authority.from(it) }
-        )
+            .let {
+               val admin = User(
+                    name = it.username,
+                    hashPassword = it.password,
+                    roles = it.authorities.map { a -> Authority.from(a) }
+                )
+                userRepository.save(admin)
+            }
     }
 
-    override fun findById(id: Long): User? = users[id]?.let {
-        User(
-            id,
-            it.username,
-            it.password,
-            roles = it.authorities.map { Authority.from(it) }
-        )
-    }
-
-    override fun save(user: User): User = user.apply {
-        val next = (users.size + 1).toLong()
-        builder()
-            .username(user.name)
-            .password(passwordEncoder.encode("1234"))
-            .roles("USER")
-            .build()
-            .let { users[next] = it }
-    }
-
-    override fun existsById(id: Long): Boolean = users.any { it.key == id }
+    fun findAll(): List<User> = userRepository.findAll()
 
 }

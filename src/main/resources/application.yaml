@@ -1,5 +1,8 @@
 spring:
-  application.name: agent
+  datasource:
+    url: jdbc:postgresql://localhost:5432/agent
+    username: agent
+    password: agent
   web:
     cors:
       allowed-origins: '*'
@@ -30,6 +33,5 @@ logging:
     pl.ejdev:.agent: DEBUG
     org.springframework.web: DEBUG
     org.springframework.web.servlet.DispatcherServlet: DEBUG
-
 app:
   features: pubmed

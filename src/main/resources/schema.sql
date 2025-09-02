@@ -1,0 +1,9 @@
+--CREATE TABLE IF not exists app_user (
+--    id BIGSERIAL PRIMARY KEY,
+--    name VARCHAR(255),
+--    password VARCHAR(255),
+--    active BOOLEAN DEFAULT FALSE,
+--    created_at TIMESTAMP,
+--    updated_at TIMESTAMP,
+--    roles VARCHAR[]
+--);

@@ -1,8 +1,8 @@
 import com.github.gradle.node.npm.task.NpmTask
 
 plugins {
-    kotlin("jvm") version "1.9.25"
-    kotlin("plugin.spring") version "1.9.25"
+    kotlin("jvm") version "2.2.10"
+    kotlin("plugin.spring") version "2.2.10"
     id("org.springframework.boot") version "3.5.4"
     id("io.spring.dependency-management") version "1.1.7"
     id("com.github.node-gradle.node") version "7.0.1"
@@ -31,11 +31,18 @@ dependencies {
     implementation("org.springframework.ai:spring-ai-starter-model-openai")
     implementation("org.springframework.security:spring-security-crypto")
 
+    implementation("org.postgresql:postgresql:42.7.7")
+    implementation("org.jetbrains.exposed:exposed-core:1.0.0-beta-5")
+    implementation("org.jetbrains.exposed:exposed-jdbc:1.0.0-beta-5")
+    implementation("org.jetbrains.exposed:exposed-java-time:1.0.0-beta-5")
+
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+
     implementation("com.fasterxml.jackson.core:jackson-core:2.20.0")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.20.0")
+
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
     implementation("io.qdrant:client:1.11.0")
 

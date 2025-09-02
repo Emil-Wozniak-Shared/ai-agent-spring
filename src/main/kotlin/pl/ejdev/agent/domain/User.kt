@@ -2,6 +2,7 @@ package pl.ejdev.agent.domain
 
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
+import pl.ejdev.agent.infrastructure.user.dto.CreateUserRequest
 import java.time.LocalDateTime
 
 enum class Authority: GrantedAuthority {
@@ -13,6 +14,12 @@ enum class Authority: GrantedAuthority {
     };
     companion object {
         fun from(authority: GrantedAuthority) = when(authority.authority.substringAfter("_")) {
+            "USER" -> USER
+            "ADMIN" -> ADMIN
+            else -> error("Unknown authority $authority")
+        }
+
+        fun from(authority: String) = when(authority) {
             "USER" -> USER
             "ADMIN" -> ADMIN
             else -> error("Unknown authority $authority")
@@ -32,4 +39,12 @@ data class User(
     override fun getAuthorities(): Collection<GrantedAuthority> = roles
     override fun getPassword(): String = hashPassword
     override fun getUsername(): String = name
+
+    companion object {
+        fun from(request: CreateUserRequest) = User(
+            name = request.name,
+            hashPassword = request.password,
+            roles = listOf(Authority.USER)
+        )
+    }
 }

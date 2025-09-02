@@ -5,9 +5,8 @@ import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.web.servlet.function.RouterFunction
 import org.springframework.web.servlet.function.ServerResponse
 import org.springframework.web.servlet.function.router
-import pl.ejdev.agent.config.RouterConfig
+import pl.ejdev.agent.config.web.RouterConfig
 import pl.ejdev.agent.config.exceptions.ExceptionHandlerFilter
-import pl.ejdev.agent.config.htmlRoutes
 import pl.ejdev.agent.infrastructure.documents.DocumentHandler
 import pl.ejdev.agent.infrastructure.pubmed.PubmedArticlesHandler
 import pl.ejdev.agent.infrastructure.user.UserHandler
@@ -56,5 +55,4 @@ fun routerFunction(
             POST(tokenHandler::create)
         }
     }
-    htmlRoutes()
 }

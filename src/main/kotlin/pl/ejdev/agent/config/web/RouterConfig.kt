@@ -1,4 +1,4 @@
-package pl.ejdev.agent.config
+package pl.ejdev.agent.config.web
 
 import org.slf4j.LoggerFactory
 import org.springframework.web.servlet.function.ServerRequest
