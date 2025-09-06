@@ -25,8 +25,11 @@ class UserAuthenticationService(
             .let {
                val admin = User(
                     name = it.username,
+                   email = "admin@agent.pl",
                     hashPassword = it.password,
-                    roles = it.authorities.map { a -> Authority.from(a) }
+                    roles = it.authorities.map { a ->
+                        Authority.from(a)
+                    }
                 )
                 userRepository.save(admin)
             }

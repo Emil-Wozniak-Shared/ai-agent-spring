@@ -7,7 +7,6 @@ export const apiRequestMiddleware = createListenerMiddleware();
 apiRequestMiddleware.startListening({
   matcher: isAsyncThunkAction,
   effect: async (action, listenerApi) => {
-    // Update last activity timestamp on any API call
     listenerApi.dispatch(updateLastActivity());
   },
 });

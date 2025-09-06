@@ -3,7 +3,7 @@ import { useAppSelector, useAppDispatch } from "~/store/hooks";
 import {
   createToken,
   clearError,
-  clearToken,
+  logout,
 } from "../store/slices/tokenSlice";
 import { addNotification } from "~/store/slices/appSlice";
 import { Label } from "@radix-ui/react-label";
@@ -41,7 +41,7 @@ const Login: React.FC = () => {
   };
 
   const handleLogout = () => {
-    dispatch(clearToken());
+    dispatch(logout());
     dispatch(
       addNotification({
         message: "Logged out successfully",

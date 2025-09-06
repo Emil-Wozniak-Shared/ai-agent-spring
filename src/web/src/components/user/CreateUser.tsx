@@ -55,8 +55,8 @@ const CreateNewUser = () => {
           id="password"
           type="password"
           placeholder="password"
-          value={newUser.email}
-          onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+          value={newUser.password}
+          onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
           required
         />
         <Button type="submit" disabled={loading}>

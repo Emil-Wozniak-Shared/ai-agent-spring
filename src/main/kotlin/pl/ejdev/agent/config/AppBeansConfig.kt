@@ -91,14 +91,17 @@ object AppBeansConfig {
                     authorize(GET, "/health", permitAll)
                     authorize(GET, "/login", permitAll)
                     authorize(POST, "/api/token", permitAll)
+                    authorize(POST, "/api/users", permitAll)
                     authorize("/api/user/**", hasRole(ADMIN.name))
                     authorize("/api/documents/**", authenticated)
                     authorize(anyRequest, authenticated)
                 }
                 logout {
-                    logoutSuccessHandler = HttpStatusReturningLogoutSuccessHandler()
-                    logoutSuccessUrl = "/"
+                    logoutUrl = "/api/logout"
                     permitAll = true
+                    invalidateHttpSession = true
+                    logoutSuccessHandler = HttpStatusReturningLogoutSuccessHandler()
+                    deleteCookies("JSESSIONID", "X-TOKEN")
                 }
                 addFilterBefore<UsernamePasswordAuthenticationFilter>(JwtFilter(ref()))
                 exceptionHandling { authenticationEntryPoint = ref<JwtAuthenticationEntryPoint>() }
@@ -106,10 +109,9 @@ object AppBeansConfig {
             httpSecurity.build()
         }
     }
+
     fun BeanDefinitionDsl.utils() {
         bean<XmlParser>()
-
     }
-
 }
 

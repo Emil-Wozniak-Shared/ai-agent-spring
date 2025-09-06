@@ -12,24 +12,29 @@ import { Link } from "react-router-dom";
 interface RouteProps {
   href: string;
   label: string;
+  authorized: boolean;
 }
 
 const routeList: RouteProps[] = [
   {
     href: "/",
     label: "Home",
+    authorized: true
   },
   {
     href: "/documents",
     label: "Documents",
+    authorized: false
   },
   {
     href: "/pubmed",
     label: "PubMed",
+    authorized: false
   },
   {
     href: "/login",
     label: "Login",
+    authorized: true
   },
 ];
 
@@ -37,6 +42,7 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const dispatch = useAppDispatch();
   const { theme, backendStatus } = useAppSelector((state) => state.app);
+  const { token } = useAppSelector((state) => state.token);
   return (
     <header className="sticky border-b-[1px] top-0 z-40 w-full bg-white dark:border-b-slate-700 dark:bg-background">
       <NavigationMenu className="mx-auto">
@@ -48,7 +54,13 @@ const Navbar = () => {
             </span>
           </div>
           <nav className="hidden md:flex gap-2">
-            {routeList.map((route: RouteProps, i) => (
+            {routeList
+                .filter(route => {
+                    if (route.authorized) return true
+                    else return token !== null
+                    }
+                )
+                .map((route: RouteProps, i) => (
               <Link
                 rel="noreferrer noopener"
                 to={route.href}

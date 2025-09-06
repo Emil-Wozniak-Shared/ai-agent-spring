@@ -28,8 +28,7 @@ fun routerFunction(
     documentHandler: DocumentHandler,
     tokenHandler: TokenHandler,
     pubmedArticlesHandler: PubmedArticlesHandler,
-
-    ): RouterFunction<ServerResponse> = router {
+): RouterFunction<ServerResponse> = router {
     filter(RouterConfig::filter)
     filter(ExceptionHandlerFilter::filter)
     ("/api" and accept(APPLICATION_JSON)).nest {

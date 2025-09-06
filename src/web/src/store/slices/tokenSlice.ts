@@ -29,6 +29,22 @@ export const createToken = createAsyncThunk(
       if (!response.ok) throw new Error("Authentication failed");
       return await response.json();
     } catch (error) {
+      console.error(error)
+      return rejectWithValue(
+        error instanceof Error ? error.message : "Unknown error",
+      );
+    }
+  },
+);
+
+export const logout = createAsyncThunk(
+  "logout",
+  async () => {
+    try {
+      const response = await fetch("/api/logout", {method: "POST" });
+      if (!response.ok) throw new Error("Authentication failed");
+      return true
+    } catch (error) {
       return rejectWithValue(
         error instanceof Error ? error.message : "Unknown error",
       );
@@ -40,11 +56,6 @@ const tokenSlice = createSlice({
   name: "token",
   initialState,
   reducers: {
-    clearToken: (state) => {
-      state.token = null;
-      state.expiresAt = null;
-      state.error = null;
-    },
     clearError: (state) => {
       state.error = null;
     },
@@ -63,7 +74,20 @@ const tokenSlice = createSlice({
       .addCase(createToken.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
-      });
+      })
+      .addCase(logout.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(logout.fulfilled, (state, action) => {
+        state.loading = false;
+        state.token = null;
+        state.expiresAt = null;
+      })
+      .addCase(logout.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
   },
 });
 

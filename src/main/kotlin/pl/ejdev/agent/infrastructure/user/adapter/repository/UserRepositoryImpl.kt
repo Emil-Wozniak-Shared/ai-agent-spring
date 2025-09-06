@@ -26,7 +26,7 @@ class UserRepositoryImpl(
             ?.let { UserMapper.from(it) }
     }
 
-    fun findByName(name: String): User? = transaction(database) {
+    override fun findByName(name: String): User? = transaction(database) {
         addLogger(StdOutSqlLogger)
         UserTable.selectAll()
             .where { UserTable.name eq name }
@@ -39,6 +39,7 @@ class UserRepositoryImpl(
         if (findByName(user.name) == null) {
             UserTable.insert {
                 it[UserTable.name] = user.name
+                it[UserTable.email] = user.email
                 it[UserTable.password] = user.password
                 it[UserTable.active] = user.active
                 it[UserTable.createdAt] = user.createdAt

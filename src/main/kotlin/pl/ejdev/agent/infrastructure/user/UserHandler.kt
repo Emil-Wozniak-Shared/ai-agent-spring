@@ -18,16 +18,14 @@ class UserHandler(
     private val createUserUseCase: CreateUserUseCase,
 
     ) {
-    fun getAllUsers(request: ServerRequest): ServerResponse {
-        return try {
-            val users = getAllUsersUseCase.handle(GetAllUsersQuery)
-            ServerResponse.ok()
-                .contentType(APPLICATION_JSON)
-                .body(users)
-        } catch (e: Exception) {
-            ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(mapOf("error" to "Failed to retrieve users"))
-        }
+    fun getAllUsers(request: ServerRequest): ServerResponse = try {
+        val users: GetAllUsersResult = getAllUsersUseCase.handle(GetAllUsersQuery)
+        ServerResponse.ok()
+            .contentType(APPLICATION_JSON)
+            .body(users)
+    } catch (e: Exception) {
+        ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(mapOf("error" to "Failed to retrieve users"))
     }
 
     fun getUserById(request: ServerRequest): ServerResponse {

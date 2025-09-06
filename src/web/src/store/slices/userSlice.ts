@@ -8,7 +8,7 @@ export interface User {
   id?: number | null;
   name: string;
   email: string;
-  hashPassword: string;
+  password: string;
   active: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -48,7 +48,8 @@ export const fetchAllUsers = createAsyncThunk(
         headers: { Accept: "application/json" },
       });
       if (!response.ok) throw new Error("Failed to fetch users");
-      return await response.json();
+      const json = await response.json()
+      return json.users;
     } catch (error) {
       return rejectWithValue(
         error instanceof Error ? error.message : "Unknown error",

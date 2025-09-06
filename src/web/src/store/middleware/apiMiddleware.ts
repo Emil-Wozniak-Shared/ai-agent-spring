@@ -2,11 +2,10 @@ import { createListenerMiddleware, isAnyOf } from '@reduxjs/toolkit';
 import { apiClient } from '../../utils/api';
 import { addNotification } from '../slices/appSlice';
 import type { RootState, AppDispatch } from '../index';
+import { logout } from '../slices/tokenSlice';
 
-// Create listener middleware for API handling
 export const apiMiddleware = createListenerMiddleware();
 
-// Generic API error handler
 const handleApiError = (error: any, dispatch: AppDispatch) => {
   const message = error?.message || 'An error occurred';
   dispatch(addNotification({
@@ -15,9 +14,9 @@ const handleApiError = (error: any, dispatch: AppDispatch) => {
   }));
 };
 
-// Listen for any rejected API action
 apiMiddleware.startListening({
   matcher: isAnyOf(
+      logout,
     // Add your async thunks here that should trigger notifications
   ),
   effect: async (action, listenerApi) => {

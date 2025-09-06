@@ -9,6 +9,7 @@ object UserMapper {
     fun from(row: ResultRow): User = User(
         id = row[UserTable.id],
         name = row[UserTable.name],
+        email = row[UserTable.email],
         hashPassword = row[UserTable.password],
         active = row[UserTable.active],
         createdAt = row[UserTable.createdAt],

@@ -27,7 +27,7 @@ data class ArticleResponse(
     @field:JsonProperty("pubstatus") var pubstatus: String? = null,
     @field:JsonProperty("articleids") var articleids: List<ArticleIds> = arrayListOf(),
     @field:JsonProperty("history") var history: List<History> = arrayListOf(),
-    @field:JsonProperty("references") var references: List<String> = arrayListOf(),
+    @field:JsonProperty("references") var references: List<Reference> = arrayListOf(),
     @field:JsonProperty("attributes") var attributes: List<String> = arrayListOf(),
     @field:JsonProperty("pmcrefcount") var pmcrefcount: String? = null,
     @field:JsonProperty("fulljournalname") var fulljournalname: String? = null,
@@ -54,3 +54,10 @@ data class ArticleResponse(
 
     fun authorsToString() = this.authors.joinToString(", ") { it.name.orUnknown() }
 }
+
+data class Reference(
+    val refsource: String?,
+    val reftype: String,
+    val pmid: Int?,
+    val note: String?
+)

@@ -30,6 +30,7 @@ enum class Authority: GrantedAuthority {
 data class User(
     val id: Long? = null,
     val name: String,
+    val email: String,
     val hashPassword: String,
     val active: Boolean = true,
     val createdAt: LocalDateTime = LocalDateTime.now(),
@@ -43,6 +44,7 @@ data class User(
     companion object {
         fun from(request: CreateUserRequest) = User(
             name = request.name,
+            email = request.email,
             hashPassword = request.password,
             roles = listOf(Authority.USER)
         )

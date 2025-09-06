@@ -8,6 +8,7 @@ const val MAX_VARCHAR_LENGTH = 255
 
 object UserTable : Table(name = "app_user") {
     val id = long("id").autoIncrement()
+    val email = varchar("email", MAX_VARCHAR_LENGTH)
     val name = varchar("name", MAX_VARCHAR_LENGTH)
     val password = varchar("password", MAX_VARCHAR_LENGTH)
     val active = bool("active").default(false)

@@ -19,7 +19,7 @@ fun BeanDefinitionDsl.userBeans() {
     bean<UserHandler>()
     bean<GetUserPort> { GetUserAdapter(ref()) }
     bean<GetAllUsersPort> { GetAllUsersAdapter(ref()) }
-    bean<CreateUserPort> { CreateUserAdapter(ref()) }
+    bean<CreateUserPort> { CreateUserAdapter(ref(), ref()) }
     bean<GetUserUseCase>()
     bean<GetAllUsersUseCase>()
     bean<CreateUserUseCase>()

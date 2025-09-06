@@ -7,5 +7,6 @@ interface UserRepository {
     fun findById(id: Long): User?
     fun save(user: User): Long
     fun existsById(id: Long): Boolean
+    fun findByName(name: String): User?
 }
 

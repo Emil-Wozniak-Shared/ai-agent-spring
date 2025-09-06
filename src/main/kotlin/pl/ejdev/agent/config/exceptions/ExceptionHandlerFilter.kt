@@ -17,6 +17,7 @@ object ExceptionHandlerFilter {
     fun filter(request: ServerRequest, next: (ServerRequest) -> ServerResponse): ServerResponse = try {
         next(request)
     } catch (e: Exception) {
+        e.printStackTrace()
         handleException(e, request)
     }
 
