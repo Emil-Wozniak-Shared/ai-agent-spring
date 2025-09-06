@@ -9,10 +9,12 @@ import { addNotification } from "~/store/slices/appSlice";
 import { Label } from "@radix-ui/react-label";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
+import {useCookies} from 'react-cookie'
 
 const Login: React.FC = () => {
+  const [cookies, setCookie, removeCookie] = useCookies(['X-TOKEN']);
   const dispatch = useAppDispatch();
-  const { token, loading, error } = useAppSelector((state) => state.token);
+  const { authorized, loading, error } = useAppSelector((state) => state.token);
   const [credentials, setCredentials] = React.useState({
     username: "",
     password: "",
@@ -20,9 +22,9 @@ const Login: React.FC = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-
     try {
-      await dispatch(createToken(credentials)).unwrap();
+      const res = await dispatch(createToken(credentials)).unwrap();
+      setCookie('X-TOKEN', res.token)
       dispatch(
         addNotification({
           message: "Login successful!",
@@ -41,6 +43,7 @@ const Login: React.FC = () => {
   };
 
   const handleLogout = () => {
+    removeCookie()
     dispatch(logout());
     dispatch(
       addNotification({
@@ -50,14 +53,14 @@ const Login: React.FC = () => {
     );
   };
 
-  if (token) {
+  if (authorized) {
     return (
       <>
         <h1 className="text-4xl font-bold mb-4">Authentication</h1>
         <div className="my-4">
           <p>✅ You are logged in!</p>
           <p className="mb-4">
-            <strong>Token:</strong> {token.substring(0, 20)}...
+            {authorized ? "Authorized" : "Not authorized"}
           </p>
           <Button onClick={handleLogout}>Logout</Button>
         </div>

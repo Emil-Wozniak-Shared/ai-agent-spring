@@ -8,7 +8,5 @@ class UserDetailsServiceProvider(
     private val userAuthenticationService: UserAuthenticationService
 ) : UserDetailsService {
     override fun loadUserByUsername(username: String?): UserDetails? =
-        userAuthenticationService.findAll().find {
-            it.username == username
-        }
+        userAuthenticationService.findAll().find { it.username == username }
 }

@@ -42,7 +42,7 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const dispatch = useAppDispatch();
   const { theme, backendStatus } = useAppSelector((state) => state.app);
-  const { token } = useAppSelector((state) => state.token);
+  const { authorized } = useAppSelector((state) => state.token);
   return (
     <header className="sticky border-b-[1px] top-0 z-40 w-full bg-white dark:border-b-slate-700 dark:bg-background">
       <NavigationMenu className="mx-auto">
@@ -57,7 +57,7 @@ const Navbar = () => {
             {routeList
                 .filter(route => {
                     if (route.authorized) return true
-                    else return token !== null
+                    else return authorized
                     }
                 )
                 .map((route: RouteProps, i) => (

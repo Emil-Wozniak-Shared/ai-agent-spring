@@ -29,11 +29,13 @@ class TokenHandler(
             )
         }
         return request.body<TokenRequest>()
+            .also { log.info("Login using credentials: $it") }
             .let(tokenService::generateToken)
-            .let {
+            .let { token ->
                 ServerResponse.ok()
                     .contentType(APPLICATION_JSON)
-                    .body(it)
+                    .headers { it.set("X-TOKEN", token.token) }
+                    .body(token)
             }
     }
 }

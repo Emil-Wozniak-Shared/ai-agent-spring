@@ -5,17 +5,20 @@ import { toggleTheme, checkBackendConnection } from "~/store/slices/appSlice";
 import { clearToken } from "~/store/slices/tokenSlice";
 import NotificationCenter from "~/components/NotificationCenter";
 import Navbar from "./Navbar";
+import Cookies from 'universal-cookie';
+import { setAuthorized } from "../store/slices/tokenSlice";
+import { useCookies } from 'react-cookie'
 
 interface LayoutProps {}
 
 const AppLayout: React.FC<LayoutProps> = () => {
+  const [cookies, setCookie, removeCookie] = useCookies(['X-TOKEN']);
   const location = useLocation();
   const dispatch = useAppDispatch();
   const { theme, backendStatus } = useAppSelector((state) => state.app);
-  const { token } = useAppSelector((state) => state.token);
-
   React.useEffect(() => {
     dispatch(checkBackendConnection());
+    dispatch(setAuthorized(true))
     const interval = setInterval(() => {
       dispatch(checkBackendConnection());
     }, 30000);

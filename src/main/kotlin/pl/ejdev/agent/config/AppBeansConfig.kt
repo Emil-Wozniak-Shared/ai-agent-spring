@@ -18,12 +18,13 @@ import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.invoke
 import org.springframework.security.config.http.SessionCreationPolicy.STATELESS
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.factory.PasswordEncoderFactories
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
-import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import pl.ejdev.agent.config.web.AppWebMvcConfigurer
@@ -78,9 +79,7 @@ object AppBeansConfig {
         bean<JwtAuthenticationEntryPoint>()
         bean<SecurityAutoConfiguration>()
         bean<UserDetailsServiceAutoConfiguration>()
-        bean<SecurityContextLogoutHandler> {
-            SecurityContextLogoutHandler()
-        }
+        bean<SecurityContextLogoutHandler> { SecurityContextLogoutHandler() }
         bean<SecurityFilterChain> {
             val httpSecurity = ref<HttpSecurity>()
             httpSecurity {
@@ -90,18 +89,20 @@ object AppBeansConfig {
                     authorize(GET, "/", permitAll)
                     authorize(GET, "/health", permitAll)
                     authorize(GET, "/login", permitAll)
+                    authorize(GET, "/logout", permitAll)
                     authorize(POST, "/api/token", permitAll)
                     authorize(POST, "/api/users", permitAll)
-                    authorize("/api/user/**", hasRole(ADMIN.name))
-                    authorize("/api/documents/**", authenticated)
                     authorize(anyRequest, authenticated)
                 }
                 logout {
                     logoutUrl = "/api/logout"
                     permitAll = true
                     invalidateHttpSession = true
-                    logoutSuccessHandler = HttpStatusReturningLogoutSuccessHandler()
-                    deleteCookies("JSESSIONID", "X-TOKEN")
+                    logoutSuccessHandler = LogoutSuccessHandler { _, response, _ ->
+                        SecurityContextHolder.clearContext()
+                        response.status = 200
+                    }
+                    deleteCookies("JSESSIONID", "X-TOKEN", "authToken")
                 }
                 addFilterBefore<UsernamePasswordAuthenticationFilter>(JwtFilter(ref()))
                 exceptionHandling { authenticationEntryPoint = ref<JwtAuthenticationEntryPoint>() }

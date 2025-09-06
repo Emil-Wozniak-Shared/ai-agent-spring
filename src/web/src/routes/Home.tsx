@@ -68,7 +68,7 @@ const AuthorizedActions = () => {
             </button>
 
             {error && <div className="error-message">{error}</div>}
-            {users && (
+            {users && users.length > 1 && (
               <div>
                 {users.map((user) =>  (
                     <UserCard
@@ -82,6 +82,9 @@ const AuthorizedActions = () => {
                   ))
                 }
               </div>
+            )}
+            {users && users.length === 1 && (
+              <Link to="/profile">Profile</Link>
             )}
         </div>
     )

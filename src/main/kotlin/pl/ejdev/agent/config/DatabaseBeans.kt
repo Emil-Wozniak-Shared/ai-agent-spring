@@ -9,6 +9,7 @@ import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import org.postgresql.Driver
 import org.springframework.context.support.BeanDefinitionDsl
 import org.springframework.core.env.get
+import pl.ejdev.agent.infrastructure.pubmed.dao.PubmedProfileTable
 import pl.ejdev.agent.infrastructure.user.dao.UserTable
 
 fun BeanDefinitionDsl.dbConfiguration() {
@@ -22,6 +23,7 @@ fun BeanDefinitionDsl.dbConfiguration() {
             transaction {
                 addLogger(StdOutSqlLogger)
                 UserTable.createIfNotExist()
+                PubmedProfileTable.createIfNotExist()
             }
         }
     }

@@ -12,8 +12,8 @@ class TokenService(
     private val authenticationManager: AuthenticationManager,
     private val userDetailsService: UserDetailsService
 ) {
-    fun generateToken(tokenRequest: TokenRequest): TokenResponse = userDetailsService
-        .loadUserByUsername(tokenRequest.username)
+    fun generateToken(tokenRequest: TokenRequest): TokenResponse =
+        userDetailsService.loadUserByUsername(tokenRequest.username)
         ?.let {
             UsernamePasswordAuthenticationToken(tokenRequest.username, tokenRequest.password)
                 .let(authenticationManager::authenticate)

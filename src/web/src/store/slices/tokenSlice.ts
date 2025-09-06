@@ -1,7 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import Cookies from 'universal-cookie';
 
 interface TokenState {
-  token: string | null;
+  authorized: string | null;
   loading: boolean;
   error: string | null;
   expiresAt: string | null;
@@ -13,6 +14,7 @@ const initialState: TokenState = {
   error: null,
   expiresAt: null,
 };
+
 
 export const createToken = createAsyncThunk(
   "token/create",
@@ -27,9 +29,22 @@ export const createToken = createAsyncThunk(
         body: JSON.stringify(credentials),
       });
       if (!response.ok) throw new Error("Authentication failed");
-      return await response.json();
+      const json = await response.json();
+      return json;
     } catch (error) {
-      console.error(error)
+      return rejectWithValue(
+        error instanceof Error ? error.message : "Unknown error",
+      );
+    }
+  },
+);
+
+export const setAuthorized = createAsyncThunk(
+  "token/set",
+  async (state: boolean) => {
+    try {
+      return state;
+    } catch (error) {
       return rejectWithValue(
         error instanceof Error ? error.message : "Unknown error",
       );
@@ -68,7 +83,7 @@ const tokenSlice = createSlice({
       })
       .addCase(createToken.fulfilled, (state, action) => {
         state.loading = false;
-        state.token = action.payload.token;
+        state.authorized = true;
         state.expiresAt = action.payload.expiresAt;
       })
       .addCase(createToken.rejected, (state, action) => {
@@ -81,10 +96,23 @@ const tokenSlice = createSlice({
       })
       .addCase(logout.fulfilled, (state, action) => {
         state.loading = false;
-        state.token = null;
+        state.authorized = null;
         state.expiresAt = null;
       })
       .addCase(logout.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(setAuthorized.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(setAuthorized.fulfilled, (state, action) => {
+        state.loading = false;
+        state.authorized = action.payload;
+        state.expiresAt = null;
+      })
+      .addCase(setAuthorized.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })
