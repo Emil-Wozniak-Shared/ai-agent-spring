@@ -2,6 +2,7 @@ package pl.ejdev.agent.infrastructure.user.adapter.all
 
 import org.springframework.security.core.context.SecurityContextHolder
 import pl.ejdev.agent.domain.Authority
+import pl.ejdev.agent.domain.UserDto
 import pl.ejdev.agent.infrastructure.user.dto.GetAllUsersEvent
 import pl.ejdev.agent.infrastructure.user.dto.GetAllUsersResult
 import pl.ejdev.agent.infrastructure.user.port.`in`.GetAllUsersPort
@@ -15,8 +16,8 @@ class GetAllUsersAdapter(
         val authentication = context.authentication
         val isAdmin = authentication.authorities.any { it == Authority.ADMIN }
         val data =
-            if (isAdmin)  userRepository.findAll()
+            if (isAdmin) userRepository.findAll()
             else listOf(userRepository.findByName(authentication.name)!!)
-        return GetAllUsersResult(data)
+        return GetAllUsersResult(data.map { UserDto.from(it) })
     }
 }

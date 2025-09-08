@@ -13,8 +13,8 @@ class CreateUserAdapter(
     override fun handle(event: CreateUserEvent): CreateUserResult =
         userRepository
             .runCatching {
-                val user = event.user
-                user.copy(hashPassword = passwordEncoder.encode(user.hashPassword)).let(this::save)
+                val user = event.userDto
+                user.copy(password = passwordEncoder.encode(user.password)).let(this::save)
             }
             .map {
                 if (it == -1L) CreateUserResult.Failure("User already exists")

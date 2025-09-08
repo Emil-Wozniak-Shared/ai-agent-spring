@@ -1,8 +1,10 @@
-// src/fe/src/utils/api.ts
-const API_BASE_URL =
-  process.env.NODE_ENV === "production"
+
+import Cookies from 'universal-cookie';
+
+
+const API_BASE_URL =  process.env.NODE_ENV === "production"
     ? "" // In production, served from same origin
-    : ""; // In development, proxy handles forwarding to :8080
+    : "http://localhost:5173"; // In development, proxy handles forwarding to :8080
 
 export interface ApiResponse<T> {
   data: T;
@@ -17,12 +19,13 @@ export class ApiClient {
     this.baseUrl = baseUrl;
   }
 
-  private async request<T>(
+  async request<T>(
     endpoint: string,
     options: RequestInit = {},
   ): Promise<T> {
+    const cookies = new Cookies();
+    const token = cookies.get('X-TOKEN');
     const url = `${this.baseUrl}${endpoint}`;
-
     const config: RequestInit = {
       headers: {
         "Content-Type": "application/json",
@@ -31,20 +34,15 @@ export class ApiClient {
       },
       ...options,
     };
+    if (token) {
+       config.headers = {
+           ...config.headers,
+            'Authorization': `Bearer ${token}`
+       }
+    }
 
     try {
-      const response = await fetch(url, config);
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      const contentType = response.headers.get("content-type");
-      if (contentType && contentType.includes("application/json")) {
-        return await response.json();
-      } else {
-        return (await response.text()) as unknown as T;
-      }
+      return await fetch(url, config);
     } catch (error) {
       console.error(`API request failed: ${endpoint}`, error);
       throw error;
@@ -86,23 +84,18 @@ export const userApi = {
   getAll: () => apiClient.get("/api/users"),
   getById: (id: number) => apiClient.get(`/api/users/${id}`),
   create: (userData: any) => apiClient.post("/api/users", userData),
-  update: (id: number, userData: any) =>
-    apiClient.put(`/api/users/${id}`, userData),
+  update: (id: number, userData: any) => apiClient.put(`/api/users/${id}`, userData),
 };
 
 export const documentApi = {
   createMany: (documents: any[]) => apiClient.post("/api/documents", documents),
-  search: (searchQuery: any) =>
-    apiClient.post("/api/documents/search", searchQuery),
+  search: (searchQuery: any) => apiClient.post("/api/documents/search", searchQuery),
 };
 
 export const pubmedApi = {
-  searchArticles: (searchParams: any) =>
-    apiClient.post("/api/pubmed/search/articles", searchParams),
-  searchByIds: (ids: string[]) =>
-    apiClient.post(`/api/pubmed/search/articles/${ids.join(",")}`, {}),
-  getAbstract: (articleId: string) =>
-    apiClient.post(`/api/pubmed/articles/${articleId}/abstract`, {}),
+  searchArticles: (searchParams: any) => apiClient.post("/api/pubmed/search/articles", searchParams),
+  searchByIds: (ids: string[]) => apiClient.post(`/api/pubmed/search/articles/${ids.join(",")}`, {}),
+  getAbstract: (articleId: string) => apiClient.post(`/api/pubmed/articles/${articleId}/abstract`, {}),
 };
 
 export const tokenApi = {

@@ -32,6 +32,7 @@ import pl.ejdev.agent.domain.Authority.ADMIN
 import pl.ejdev.agent.infrastructure.documents.documentBeans
 import pl.ejdev.agent.infrastructure.embedding.embeddingBeans
 import pl.ejdev.agent.infrastructure.openai.openAiBeans
+import pl.ejdev.agent.infrastructure.orcid.orcidBeans
 import pl.ejdev.agent.infrastructure.pubmed.pubmedBeans
 import pl.ejdev.agent.infrastructure.qdrant.qdrantBeans
 import pl.ejdev.agent.infrastructure.user.userBeans
@@ -55,6 +56,7 @@ object AppBeansConfig {
         documentBeans()
         userBeans()
         pubmedBeans()
+        orcidBeans()
         embeddingBeans()
         routes()
     }
@@ -92,7 +94,8 @@ object AppBeansConfig {
                     authorize(GET, "/logout", permitAll)
                     authorize(POST, "/api/token", permitAll)
                     authorize(POST, "/api/users", permitAll)
-                    authorize(anyRequest, authenticated)
+                    authorize( "/api/users", hasAnyRole("USER", "ADMIN"))
+                    authorize(anyRequest, hasAnyRole("USER", "ADMIN"))
                 }
                 logout {
                     logoutUrl = "/api/logout"

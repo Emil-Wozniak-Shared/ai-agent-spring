@@ -3,6 +3,7 @@ import {
   createAsyncThunk,
   type PayloadAction,
 } from "@reduxjs/toolkit";
+import {apiClient} from '../api'
 
 export interface PubmedArticle {
   id: string;
@@ -38,7 +39,7 @@ export const searchPubmedArticles = createAsyncThunk(
   "pubmed/searchArticles",
   async (searchParams: SearchPubmedArticlesParams, { rejectWithValue }) => {
     try {
-      const response = await fetch("/api/pubmed/search/articles", {
+      const response = await apiClient.request("/api/pubmed/search/articles", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(searchParams),
@@ -58,7 +59,7 @@ export const searchPubmedArticlesByIds = createAsyncThunk(
   "pubmed/searchByIds",
   async (ids: string[], { rejectWithValue }) => {
     try {
-      const response = await fetch(
+      const response = await apiClient.request(
         `/api/pubmed/search/articles/${ids.join(",")}`,
         {
           method: "POST",
@@ -80,7 +81,7 @@ export const fetchArticleAbstract = createAsyncThunk(
   "pubmed/fetchAbstract",
   async (articleId: string, { rejectWithValue }) => {
     try {
-      const response = await fetch(
+      const response = await apiClient.request(
         `/api/pubmed/articles/${articleId}/abstract`,
         {
           method: "POST",

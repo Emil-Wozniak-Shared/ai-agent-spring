@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import {apiClient} from '../api'
 
 export interface Document {
   id: string;
@@ -27,7 +28,7 @@ export const createManyDocuments = createAsyncThunk(
     { rejectWithValue },
   ) => {
     try {
-      const response = await fetch("/api/documents", {
+      const response = await apiClient.request("/api/documents", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -61,7 +62,7 @@ export const searchDocuments = createAsyncThunk(
           },
         ],
       };
-      const response = await fetch("/api/documents/search", {
+      const response = await apiClient.request("/api/documents/search", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

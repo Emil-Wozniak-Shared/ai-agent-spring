@@ -1,5 +1,5 @@
 import { createListenerMiddleware, isAnyOf } from '@reduxjs/toolkit';
-import { apiClient } from '../../utils/api';
+import { apiClient } from '../api';
 import { addNotification } from '../slices/appSlice';
 import type { RootState, AppDispatch } from '../index';
 import { logout } from '../slices/tokenSlice';

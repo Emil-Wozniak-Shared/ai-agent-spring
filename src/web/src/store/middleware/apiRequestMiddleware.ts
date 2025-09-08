@@ -14,14 +14,13 @@ apiRequestMiddleware.startListening({
 apiRequestMiddleware.startListening({
   matcher: isAsyncThunkAction,
   effect: async (action, listenerApi) => {
-    const cookies = new Cookies();
-    const token = cookies.get('X-TOKEN');
-    console.log('token', token)
-    if (token) {
-      action.headers = {
-        ...action.headers,
-        'Authorization': `Bearer ${token}`
-      };
-    }
+//     const cookies = new Cookies();
+//     const token = cookies.get('X-TOKEN');
+//     if (token) {
+//       action.headers = {
+//         ...action.headers,
+//         'Authorization': `Bearer ${token}`
+//       };
+//     }
   },
 });

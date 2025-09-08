@@ -34,4 +34,4 @@ logging:
     org.springframework.web: DEBUG
     org.springframework.web.servlet.DispatcherServlet: DEBUG
 app:
-  features: pubmed
+  features: pubmed,orcid

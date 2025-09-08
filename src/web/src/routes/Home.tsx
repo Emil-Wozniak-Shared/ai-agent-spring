@@ -15,7 +15,7 @@ import { Link } from "react-router-dom";
 
 const Home: React.FC = () => {
   const dispatch = useAppDispatch();
-  const {token} = useAppSelector((state) => state.token);
+  const {authorized} = useAppSelector((state) => state.token);
   const [newUser, setNewUser] = React.useState<User>(emptyUser);
 
 
@@ -27,7 +27,7 @@ const Home: React.FC = () => {
     <div className="page">
       <h1>Dashboard</h1>
       <CreateNewUser />
-      {token
+      {authorized
             ? <AuthorizedActions />
             : <Link to="/login"> {"Login"} </Link>
       }
@@ -68,6 +68,7 @@ const AuthorizedActions = () => {
             </button>
 
             {error && <div className="error-message">{error}</div>}
+            <br/>
             {users && users.length > 1 && (
               <div>
                 {users.map((user) =>  (
@@ -83,8 +84,9 @@ const AuthorizedActions = () => {
                 }
               </div>
             )}
+            <br/>
             {users && users.length === 1 && (
-              <Link to="/profile">Profile</Link>
+              <Link to="/profile">{"Profile"}</Link>
             )}
         </div>
     )

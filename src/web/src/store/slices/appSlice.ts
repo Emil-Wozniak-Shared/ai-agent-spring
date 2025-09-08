@@ -3,6 +3,7 @@ import {
   createAsyncThunk,
   type PayloadAction,
 } from "@reduxjs/toolkit";
+import {apiClient} from '../api'
 
 export interface Notification {
   id: string;
@@ -33,7 +34,7 @@ export const checkBackendConnection = createAsyncThunk(
   "app/checkBackendConnection",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await fetch("/api/health", {
+      const response = await apiClient.request("/api/health", {
         method: "GET",
         headers: { Accept: "application/json" },
       });

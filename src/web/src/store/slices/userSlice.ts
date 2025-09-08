@@ -3,9 +3,9 @@ import {
   createAsyncThunk,
   type PayloadAction,
 } from "@reduxjs/toolkit";
+import {apiClient} from '../api'
 
 export interface User {
-  id?: number | null;
   name: string;
   email: string;
   password: string;
@@ -44,13 +44,15 @@ export const fetchAllUsers = createAsyncThunk(
   "users/fetchAll",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await fetch("/api/users", {
+      const response = await apiClient.request(
+          "/api/users", {
         headers: { Accept: "application/json" },
       });
       if (!response.ok) throw new Error("Failed to fetch users");
       const json = await response.json()
       return json.users;
     } catch (error) {
+        console.error(error)
       return rejectWithValue(
         error instanceof Error ? error.message : "Unknown error",
       );
@@ -62,7 +64,7 @@ export const fetchUserById = createAsyncThunk(
   "users/fetchById",
   async (id: number, { rejectWithValue }) => {
     try {
-      const response = await fetch(`/api/users/${id}`, {
+      const response = await apiClient.request(`/api/users/${id}`, {
         headers: { Accept: "application/json" },
       });
       if (!response.ok) throw new Error("User not found");
@@ -79,7 +81,7 @@ export const createUser = createAsyncThunk(
   "users/create",
   async (userData: Omit<User, "id">, { rejectWithValue }) => {
     try {
-      const response = await fetch("/api/users", {
+      const response = await apiClient.request("/api/users", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -104,7 +106,7 @@ export const updateUser = createAsyncThunk(
     { rejectWithValue },
   ) => {
     try {
-      const response = await fetch(`/api/users/${id}`, {
+      const response = await apiClient.request(`/api/users/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

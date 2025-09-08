@@ -5,7 +5,7 @@ import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.web.servlet.function.ServerRequest
 import org.springframework.web.servlet.function.ServerResponse
 import org.springframework.web.servlet.function.body
-import pl.ejdev.agent.domain.User
+import pl.ejdev.agent.domain.UserDto
 import pl.ejdev.agent.infrastructure.user.dto.*
 import pl.ejdev.agent.infrastructure.user.usecase.CreateUserUseCase
 import pl.ejdev.agent.infrastructure.user.usecase.GetAllUsersUseCase
@@ -38,7 +38,7 @@ class UserHandler(
                 is GetUserResult.Empty -> ServerResponse.notFound().build()
                 is GetUserResult.Some -> ServerResponse.ok()
                     .contentType(APPLICATION_JSON)
-                    .body(result.user)
+                    .body(result.userDto)
             }
         } catch (e: Exception) {
             ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -54,7 +54,7 @@ class UserHandler(
                     .body(mapOf("error" to "Name and password are required"))
             }
 
-            return when (val result = createUserUseCase.handle(CreateUserQuery(User.from(userRequest)))) {
+            return when (val result = createUserUseCase.handle(CreateUserQuery(UserDto.from(userRequest)))) {
                 is CreateUserResult.Failure -> ServerResponse.badRequest()
                     .contentType(APPLICATION_JSON)
                     .body(result.message)
@@ -73,9 +73,9 @@ class UserHandler(
             is GetUserResult.Empty -> ServerResponse.notFound().build()
             is GetUserResult.Some -> {
                 val userRequest = request.body<UpdateUserRequest>()
-                val updatedUser = result.user.copy(
+                val updatedUser = result.userDto.copy(
                     name = userRequest.name,
-                    hashPassword = userRequest.password
+                    password = userRequest.password
                 )
 
                 when (val result = createUserUseCase.handle(CreateUserQuery(updatedUser))) {

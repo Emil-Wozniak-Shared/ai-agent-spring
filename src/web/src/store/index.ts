@@ -4,6 +4,7 @@ import documentSlice from "./slices/documentSlice";
 import pubmedSlice from "./slices/pubmedSlice";
 import tokenSlice from "./slices/tokenSlice";
 import appSlice from "./slices/appSlice";
+import orcidSlice from "./slices/orcidSlice";
 import {
   apiMiddleware,
   authMiddleware,
@@ -19,6 +20,7 @@ export const store = configureStore({
     pubmed: pubmedSlice,
     token: tokenSlice,
     app: appSlice,
+    orcid: orcidSlice
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

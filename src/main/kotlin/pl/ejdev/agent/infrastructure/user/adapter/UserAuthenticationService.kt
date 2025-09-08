@@ -4,6 +4,7 @@ import org.springframework.security.core.userdetails.User.builder
 import org.springframework.security.crypto.password.PasswordEncoder
 import pl.ejdev.agent.domain.Authority
 import pl.ejdev.agent.domain.User
+import pl.ejdev.agent.domain.UserDto
 import pl.ejdev.agent.infrastructure.user.port.out.UserRepository
 
 class UserAuthenticationService(
@@ -23,10 +24,10 @@ class UserAuthenticationService(
             .roles("ADMIN")
             .build()
             .let {
-               val admin = User(
+               val admin = UserDto(
                     name = it.username,
                    email = "admin@agent.pl",
-                    hashPassword = it.password,
+                    password = it.password,
                     roles = it.authorities.map { a ->
                         Authority.from(a)
                     }

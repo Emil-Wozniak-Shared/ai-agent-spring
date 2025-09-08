@@ -21,6 +21,7 @@ class JwtAuthenticationEntryPoint : AuthenticationEntryPoint {
         val exception = request.getAttribute("exception") as Exception?
         response.status = SC_UNAUTHORIZED
         response.contentType = APPLICATION_JSON_VALUE
+        exception?.printStackTrace()
         log.error("Authentication Exception: $exception ")
         val data: MutableMap<String?, Any?> = HashMap()
         data["message"] = if (exception != null) exception.message else authException.cause.toString()

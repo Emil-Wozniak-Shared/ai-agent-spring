@@ -1,7 +1,7 @@
 package pl.ejdev.agent.infrastructure.user.dto
 
-import pl.ejdev.agent.domain.User
+import pl.ejdev.agent.domain.UserDto
 
 data class GetAllUsersResult(
-    val users: List<User>
+    val users: List<UserDto>
 )

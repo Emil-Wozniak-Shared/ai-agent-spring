@@ -8,6 +8,7 @@ import org.springframework.web.servlet.function.router
 import pl.ejdev.agent.config.web.RouterConfig
 import pl.ejdev.agent.config.exceptions.ExceptionHandlerFilter
 import pl.ejdev.agent.infrastructure.documents.DocumentHandler
+import pl.ejdev.agent.infrastructure.orcid.OrcidHandler
 import pl.ejdev.agent.infrastructure.pubmed.PubmedArticlesHandler
 import pl.ejdev.agent.infrastructure.user.UserHandler
 import pl.ejdev.agent.security.jwt.TokenHandler
@@ -19,6 +20,7 @@ fun BeanDefinitionDsl.routes() {
             documentHandler = ref(),
             tokenHandler = ref(),
             pubmedArticlesHandler = ref(),
+            orcidHandler = ref()
         )
     }
 }
@@ -28,6 +30,7 @@ fun routerFunction(
     documentHandler: DocumentHandler,
     tokenHandler: TokenHandler,
     pubmedArticlesHandler: PubmedArticlesHandler,
+    orcidHandler: OrcidHandler
 ): RouterFunction<ServerResponse> = router {
     filter(RouterConfig::filter)
     filter(ExceptionHandlerFilter::filter)
@@ -49,6 +52,9 @@ fun routerFunction(
             POST("/search/articles", pubmedArticlesHandler::search)
             POST("/search/articles/{ids}", pubmedArticlesHandler::searchBy)
             POST("/articles/{id}/abstract", pubmedArticlesHandler::abstract)
+        }
+        ("orcid" and contentType(APPLICATION_JSON)).nest {
+            PUT(orcidHandler::update)
         }
         ("/token" and contentType(APPLICATION_JSON)).nest {
             POST(tokenHandler::create)

@@ -2,12 +2,11 @@ package pl.ejdev.agent.infrastructure.user.adapter.repository
 
 import org.jetbrains.exposed.v1.core.StdOutSqlLogger
 import org.jetbrains.exposed.v1.jdbc.Database
-import org.jetbrains.exposed.v1.jdbc.insert
-import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
+import pl.ejdev.agent.domain.OrcidProfile
 import pl.ejdev.agent.domain.User
+import pl.ejdev.agent.domain.UserDto
 import pl.ejdev.agent.infrastructure.user.dao.UserTable
-import pl.ejdev.agent.infrastructure.user.mapper.UserMapper
 import pl.ejdev.agent.infrastructure.user.port.out.UserRepository
 
 class UserRepositoryImpl(
@@ -15,43 +14,47 @@ class UserRepositoryImpl(
 ) : UserRepository {
     override fun findAll(): List<User> = transaction(database) {
         addLogger(StdOutSqlLogger)
-        UserTable.selectAll().map { UserMapper.from(it) }
+        User.all().toList()
     }
 
     override fun findById(id: Long): User? = transaction(database) {
         addLogger(StdOutSqlLogger)
-        UserTable.selectAll()
-            .where { UserTable.id eq id }
-            .firstOrNull()
-            ?.let { UserMapper.from(it) }
+        User.findById(id)
     }
 
     override fun findByName(name: String): User? = transaction(database) {
         addLogger(StdOutSqlLogger)
-        UserTable.selectAll()
-            .where { UserTable.name eq name }
-            .firstOrNull()
-            ?.let { UserMapper.from(it) }
+        User.find { UserTable.name eq name }.firstOrNull()
     }
 
-    override fun save(user: User): Long = transaction(database) {
+    override fun save(userDto: UserDto): Long = transaction(database) {
         addLogger(StdOutSqlLogger)
-        if (findByName(user.name) == null) {
-            UserTable.insert {
-                it[UserTable.name] = user.name
-                it[UserTable.email] = user.email
-                it[UserTable.password] = user.password
-                it[UserTable.active] = user.active
-                it[UserTable.createdAt] = user.createdAt
-                it[UserTable.updatedAt] = user.updatedAt
-                it[UserTable.roles] = user.roles.map { role -> role.name }
-            } get UserTable.id
-        } else {
-            ALREADY_EXIST_CODE
-        }
+        userDto.takeIf { existsByName(it.name) }
+            ?.let { dto ->
+                val newUser = User.new {
+                    name = dto.name
+                    email = dto.email
+                    password = dto.password
+                    active = dto.active
+                    createdAt = dto.createdAt
+                    updatedAt = dto.updatedAt
+                    roles = dto.roles.map { role -> role.name }
+                }
+                OrcidProfile.new {
+                    this.user = newUser
+                    email = newUser.email
+                    orcid = null
+
+                }
+                newUser.id.value
+            }
+            ?: ALREADY_EXIST_CODE
+
     }
 
     override fun existsById(id: Long): Boolean = findById(id) != null
+
+    private fun existsByName(name: String): Boolean = User.find { UserTable.name eq name }.singleOrNull() != null
 
     private companion object {
         const val ALREADY_EXIST_CODE = -1L
