@@ -1,5 +1,6 @@
 package pl.ejdev.agent.security.jwt
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.MalformedJwtException
 import io.jsonwebtoken.UnsupportedJwtException
@@ -15,10 +16,13 @@ import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
 import org.springframework.web.filter.OncePerRequestFilter
 
+private const val BEARER = "Bearer "
+
 class JwtFilter(
     private val userDetailsService: UserDetailsService,
 ) : OncePerRequestFilter() {
-    private val log = LoggerFactory.getLogger(this::class.java)
+    private val log = KotlinLogging.logger {}
+
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
@@ -39,7 +43,7 @@ class JwtFilter(
     }
 
     fun RuntimeException.logAndAttach(request: HttpServletRequest) {
-        log.error("Filter exception: $message")
+        log.error { "Filter exception: $message" }
         request.setAttribute("exception", this)
     }
 
@@ -47,7 +51,7 @@ class JwtFilter(
         val authorizationHeader = request.getHeader(AUTHORIZATION)
         var jwt: String? = null
         var username: String? = null
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+        if (authorizationHeader != null && authorizationHeader.startsWith(BEARER)) {
             jwt = authorizationHeader.substring(7)
             username = JwtHelper.extractUsername(jwt)
         }

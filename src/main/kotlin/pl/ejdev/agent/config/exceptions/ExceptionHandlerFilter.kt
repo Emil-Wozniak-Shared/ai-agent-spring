@@ -1,7 +1,7 @@
 package pl.ejdev.agent.config.exceptions
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.micrometer.core.instrument.config.validate.ValidationException
-import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.*
 import org.springframework.http.MediaType.APPLICATION_JSON
@@ -12,7 +12,7 @@ import pl.ejdev.agent.security.error.UserNotFoundException
 import java.time.LocalDateTime
 
 object ExceptionHandlerFilter {
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = KotlinLogging.logger {}
 
     fun filter(request: ServerRequest, next: (ServerRequest) -> ServerResponse): ServerResponse = try {
         next(request)
@@ -43,7 +43,7 @@ object ExceptionHandlerFilter {
 
                 else -> {
                     // Log the unexpected exception
-                    logger.error("Unexpected error: ${exception.javaClass.simpleName}: ${exception.message}")
+                    logger.error { "Unexpected error: ${exception.javaClass.simpleName}: ${exception.message}" }
                     exception.printStackTrace()
                     errorResponse(
                         INTERNAL_SERVER_ERROR, INTERNAL_ERROR, "An unexpected error occurred", path,

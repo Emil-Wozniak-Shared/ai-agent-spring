@@ -3,7 +3,7 @@ package pl.ejdev.agent.infrastructure.user.adapter
 import org.springframework.security.core.userdetails.User.builder
 import org.springframework.security.crypto.password.PasswordEncoder
 import pl.ejdev.agent.domain.Authority
-import pl.ejdev.agent.domain.User
+import pl.ejdev.agent.infrastructure.user.dao.User
 import pl.ejdev.agent.domain.UserDto
 import pl.ejdev.agent.infrastructure.user.port.out.UserRepository
 

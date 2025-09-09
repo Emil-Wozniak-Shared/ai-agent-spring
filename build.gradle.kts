@@ -51,6 +51,9 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt-impl:0.11.1")
     implementation("io.jsonwebtoken:jjwt-jackson:0.11.1")
 
+    // logging
+    implementation("io.github.oshai:kotlin-logging:7.0.13")
+
     implementation("io.arrow-kt:arrow-core-jvm:2.1.2")
     runtimeOnly("io.arrow-kt:arrow-core:2.1.2")
     testImplementation("io.arrow-kt:arrow-test:0.10.4")

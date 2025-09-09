@@ -3,8 +3,8 @@ package pl.ejdev.agent.infrastructure.user.adapter.repository
 import org.jetbrains.exposed.v1.core.StdOutSqlLogger
 import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
-import pl.ejdev.agent.domain.OrcidProfile
-import pl.ejdev.agent.domain.User
+import pl.ejdev.agent.infrastructure.orcid.dao.OrcidProfile
+import pl.ejdev.agent.infrastructure.user.dao.User
 import pl.ejdev.agent.domain.UserDto
 import pl.ejdev.agent.infrastructure.user.dao.UserTable
 import pl.ejdev.agent.infrastructure.user.port.out.UserRepository
@@ -29,7 +29,7 @@ class UserRepositoryImpl(
 
     override fun save(userDto: UserDto): Long = transaction(database) {
         addLogger(StdOutSqlLogger)
-        userDto.takeIf { existsByName(it.name) }
+        userDto.takeIf { !existsByName(it.name) }
             ?.let { dto ->
                 val newUser = User.new {
                     name = dto.name

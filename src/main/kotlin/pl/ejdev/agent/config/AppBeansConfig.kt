@@ -28,7 +28,6 @@ import org.springframework.security.web.authentication.logout.LogoutSuccessHandl
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import pl.ejdev.agent.config.web.AppWebMvcConfigurer
-import pl.ejdev.agent.domain.Authority.ADMIN
 import pl.ejdev.agent.infrastructure.documents.documentBeans
 import pl.ejdev.agent.infrastructure.embedding.embeddingBeans
 import pl.ejdev.agent.infrastructure.openai.openAiBeans

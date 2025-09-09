@@ -1,6 +1,6 @@
 package pl.ejdev.agent.infrastructure.user.port.out
 
-import pl.ejdev.agent.domain.User
+import pl.ejdev.agent.infrastructure.user.dao.User
 import pl.ejdev.agent.domain.UserDto
 
 interface UserRepository {

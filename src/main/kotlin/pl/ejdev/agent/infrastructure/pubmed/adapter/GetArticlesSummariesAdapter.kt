@@ -20,23 +20,31 @@ class GetArticlesSummariesAdapter(
 ): GetArticlesSummariesPort {
     override fun handle(event: GetArticlesSummariesEvent): List<ArticleResponse> {
         val ids = event.idList.joinToString(",")
-        val getArticleSummaryResponse = pubmed.client
-            .get(EUtils.SUMMARY) {
-                queryParams(
-                    Params.DB_PUBMED,
-                    Params.RETURN_MODE_JSON,
-                    "id" to ids,
-                    "email" to event.email.uriEncode(),
-                )
-            }
-            .retrieve()
-            .body<GetArticleSummaryResponse>()
-            ?: GetArticleSummaryResponse()
-        return getArticleSummaryResponse.result
+        val getArticleSummaryResponse = articleSummaryResponse(ids, event)
+        return articleResponses(getArticleSummaryResponse)
+    }
+
+    private fun articleResponses(getArticleSummaryResponse: GetArticleSummaryResponse): List<ArticleResponse> =
+        getArticleSummaryResponse.result
             .asSequence()
             .filter { it.key != "uids" }
             .map { objectMapper.writeValueAsString(it.value) }
-            .map { objectMapper.readValue<ArticleResponse>(it)  }
+            .map { objectMapper.readValue<ArticleResponse>(it) }
             .toList()
-    }
+
+    private fun articleSummaryResponse(
+        ids: String,
+        event: GetArticlesSummariesEvent
+    ): GetArticleSummaryResponse = (pubmed.client
+        .get(EUtils.SUMMARY) {
+            queryParams(
+                Params.DB_PUBMED,
+                Params.RETURN_MODE_JSON,
+                "id" to ids,
+                "email" to event.email.uriEncode(),
+            )
+        }
+        .retrieve()
+        .body<GetArticleSummaryResponse>()
+        ?: GetArticleSummaryResponse())
 }

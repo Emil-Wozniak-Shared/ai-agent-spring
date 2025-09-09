@@ -1,5 +1,6 @@
 package pl.ejdev.agent.infrastructure.pubmed.adapter
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.slf4j.LoggerFactory
 import org.springframework.web.client.body
 import pl.ejdev.agent.config.XmlParser
@@ -19,13 +20,13 @@ class GetPubmedArticleAbstractAdapter(
     private val pubmed: PubmedRestClient,
     private val xmlParser: XmlParser
 ) : GetPubmedArticleAbstractPort {
-    private val log = LoggerFactory.getLogger(this::class.java)
+    private val log = KotlinLogging.logger {}
 
     override fun handle(event: GetPubmedArticleAbstractEvent): GetPubmedArticleAbstractResult {
         val searchResult = searchByTerm(event)
         val reportXml = fetchReportXml(event, searchResult)
         val body = xmlParser.parse(reportXml, PubmedArticleSet::class)
-        log.info("Found article: $body")
+        log.info { "Found article: $body" }
 
         return body.pubmedArticle.medlineCitation.article.run {
             GetPubmedArticleAbstractResult(
