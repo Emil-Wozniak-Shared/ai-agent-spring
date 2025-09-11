@@ -1,6 +1,7 @@
 package pl.ejdev.agent.infrastructure.user.adapter.repository
 
 import org.jetbrains.exposed.v1.core.StdOutSqlLogger
+import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import pl.ejdev.agent.infrastructure.orcid.dao.OrcidProfile

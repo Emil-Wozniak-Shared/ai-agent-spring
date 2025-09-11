@@ -5,7 +5,7 @@ import pl.ejdev.agent.infrastructure.documents.usecase.create.CreateDocumentUseC
 import pl.ejdev.agent.infrastructure.documents.usecase.search.SearchDocumentUseCase
 
 fun BeanDefinitionDsl.documentBeans() {
-    bean<SearchDocumentUseCase> { SearchDocumentUseCase(ref()) }
+    bean<SearchDocumentUseCase> { SearchDocumentUseCase(ref(), ref()) }
     bean<CreateDocumentUseCase> { CreateDocumentUseCase(ref()) }
     bean<DocumentHandler>()
 }

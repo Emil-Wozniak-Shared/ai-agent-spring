@@ -26,7 +26,7 @@ class UserAuthenticationService(
             .let {
                val admin = UserDto(
                     name = it.username,
-                   email = "admin@agent.pl",
+                    email = "admin@agent.pl",
                     password = it.password,
                     roles = it.authorities.map { a ->
                         Authority.from(a)

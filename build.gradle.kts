@@ -32,10 +32,12 @@ dependencies {
     implementation("org.springframework.security:spring-security-crypto")
 
     implementation("org.postgresql:postgresql:42.7.7")
-    implementation("org.jetbrains.exposed:exposed-core:1.0.0-beta-5")
-    implementation("org.jetbrains.exposed:exposed-jdbc:1.0.0-beta-5")
-    implementation("org.jetbrains.exposed:exposed-java-time:1.0.0-beta-5")
-    implementation("org.jetbrains.exposed:exposed-dao:1.0.0-beta-5")
+    implementation("org.jetbrains.exposed:exposed-core:1.0.0-rc-1")
+    implementation("org.jetbrains.exposed:exposed-jdbc:1.0.0-rc-1")
+    implementation("org.jetbrains.exposed:exposed-java-time:1.0.0-rc-1")
+    implementation("org.jetbrains.exposed:exposed-dao:1.0.0-rc-1")
+    implementation("org.jetbrains.exposed:exposed-migration-core:1.0.0-rc-1")
+    implementation("org.jetbrains.exposed:exposed-migration-jdbc:1.0.0-rc-1")
 
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")

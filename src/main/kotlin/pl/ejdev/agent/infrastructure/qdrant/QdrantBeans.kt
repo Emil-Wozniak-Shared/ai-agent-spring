@@ -19,10 +19,10 @@ fun BeanDefinitionDsl.qdrantBeans() {
     bean<QdrantGrpcClient>(::qdrantGrpcClient)
     bean<QdrantClient>()
     bean<VectorStore> { qdrantVectorStore(env, ref()) }
-    bean<SearchQdrantPort> { SearchQdrantAdapter(ref()) }
+    bean<SearchQdrantPort> { SearchQdrantAdapter(ref(), ref(), ref()) }
     bean<CreateQdrantPort> { CreateQdrantAdapter(ref()) }
     bean<CreateQdrantUseCase> { CreateQdrantUseCase(ref()) }
-    bean<SearchQdrantUseCase> { SearchQdrantUseCase(ref()) }
+    bean<SearchQdrantUseCase> { SearchQdrantUseCase(ref(), ref()) }
 }
 
 private fun BeanDefinitionDsl.BeanSupplierContext.qdrantVectorStore(
