@@ -1,7 +1,7 @@
 package pl.ejdev.agent.infrastructure.orcid.usecase
 
 import org.springframework.security.core.context.SecurityContextHolder
-import pl.ejdev.agent.infrastructure.user.dao.User
+import pl.ejdev.agent.infrastructure.user.dao.UserEntity
 import pl.ejdev.agent.infrastructure.base.usecase.UseCase
 import pl.ejdev.agent.infrastructure.orcid.dto.UpdateOrcidEvent
 import pl.ejdev.agent.infrastructure.orcid.dto.UpdateOrcidQuery
@@ -12,7 +12,7 @@ class UpdateOrcidUseCase(
     private val updateOrcidPort: UpdateOrcidPort
 ) : UseCase<UpdateOrcidQuery, UpdateOrcidResult> {
     override fun handle(query: UpdateOrcidQuery): UpdateOrcidResult {
-        val userDto = SecurityContextHolder.getContext().authentication.principal as User
-        return updateOrcidPort.handle(UpdateOrcidEvent(query.id, userDto.email))
+        val userEntityDto = SecurityContextHolder.getContext().authentication.principal as UserEntity
+        return updateOrcidPort.handle(UpdateOrcidEvent(query.id, userEntityDto.email))
     }
 }

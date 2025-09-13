@@ -5,7 +5,7 @@ import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import pl.ejdev.agent.infrastructure.orcid.dao.OrcidProfile
-import pl.ejdev.agent.infrastructure.user.dao.User
+import pl.ejdev.agent.infrastructure.user.dao.UserEntity
 import pl.ejdev.agent.domain.UserDto
 import pl.ejdev.agent.infrastructure.user.dao.UserTable
 import pl.ejdev.agent.infrastructure.user.port.out.UserRepository
@@ -13,49 +13,50 @@ import pl.ejdev.agent.infrastructure.user.port.out.UserRepository
 class UserRepositoryImpl(
     private val database: Database
 ) : UserRepository {
-    override fun findAll(): List<User> = transaction(database) {
+    override fun findAll(): List<UserEntity> = transaction(database) {
         addLogger(StdOutSqlLogger)
-        User.all().toList()
+        UserEntity.all().toList()
     }
 
-    override fun findById(id: Long): User? = transaction(database) {
+    override fun findById(id: Long): UserEntity? = transaction(database) {
         addLogger(StdOutSqlLogger)
-        User.findById(id)
+        UserEntity.findById(id)
     }
 
-    override fun findByName(name: String): User? = transaction(database) {
+    override fun findByName(name: String): UserEntity? = transaction(database) {
         addLogger(StdOutSqlLogger)
-        User.find { UserTable.name eq name }.firstOrNull()
+        UserEntity.find { UserTable.name eq name }.firstOrNull()
     }
 
     override fun save(userDto: UserDto): Long = transaction(database) {
         addLogger(StdOutSqlLogger)
-        userDto.takeIf { !existsByName(it.name) }
+        userDto.takeIf { !existsBy(it.email) }
             ?.let { dto ->
-                val newUser = User.new {
+                val newUserEntity = UserEntity.new {
                     name = dto.name
+                    firstName = dto.firstName
+                    lastName = dto.lastName
                     email = dto.email
                     password = dto.password
                     active = dto.active
                     createdAt = dto.createdAt
                     updatedAt = dto.updatedAt
-                    roles = dto.roles.map { role -> role.name }
+                    roles = dto.roles.map { it.name }
                 }
                 OrcidProfile.new {
-                    this.user = newUser
-                    email = newUser.email
+                    this.userEntity = newUserEntity
+                    email = newUserEntity.email
                     orcid = null
 
                 }
-                newUser.id.value
+                newUserEntity.id.value
             }
             ?: ALREADY_EXIST_CODE
-
     }
 
     override fun existsById(id: Long): Boolean = findById(id) != null
 
-    private fun existsByName(name: String): Boolean = User.find { UserTable.name eq name }.singleOrNull() != null
+    private fun existsBy(email: String): Boolean = UserEntity.find { UserTable.email eq email }.singleOrNull() != null
 
     private companion object {
         const val ALREADY_EXIST_CODE = -1L

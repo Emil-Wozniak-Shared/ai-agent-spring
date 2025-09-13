@@ -2,9 +2,9 @@
 import Cookies from 'universal-cookie';
 
 
-const API_BASE_URL =  process.env.NODE_ENV === "production"
-    ? "" // In production, served from same origin
-    : "http://localhost:5173"; // In development, proxy handles forwarding to :8080
+const API_BASE_URL = process.env.NODE_ENV === "production"
+  ? "" // In production, served from same origin
+  : "http://localhost:5173"; // In development, proxy handles forwarding to :8080
 
 export interface ApiResponse<T> {
   data: T;
@@ -22,7 +22,7 @@ export class ApiClient {
   async request<T>(
     endpoint: string,
     options: RequestInit = {},
-  ): Promise<T> {
+  ): Promise<Response> {
     const cookies = new Cookies();
     const token = cookies.get('X-TOKEN');
     const url = `${this.baseUrl}${endpoint}`;
@@ -35,14 +35,14 @@ export class ApiClient {
       ...options,
     };
     if (token) {
-       config.headers = {
-           ...config.headers,
-            'Authorization': `Bearer ${token}`
-       }
+      config.headers = {
+        ...config.headers,
+        'Authorization': `Bearer ${token}`
+      }
     }
 
     try {
-      return await fetch(url, config);
+      return await fetch(url, config) as Response;
     } catch (error) {
       console.error(`API request failed: ${endpoint}`, error);
       throw error;

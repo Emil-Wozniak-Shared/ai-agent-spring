@@ -2,14 +2,14 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import Cookies from 'universal-cookie';
 
 interface TokenState {
-  authorized: string | null;
+  authorized: boolean | null;
   loading: boolean;
   error: string | null;
   expiresAt: string | null;
 }
 
 const initialState: TokenState = {
-  token: null,
+  authorized: false,
   loading: false,
   error: null,
   expiresAt: null,
@@ -19,7 +19,7 @@ const initialState: TokenState = {
 export const createToken = createAsyncThunk(
   "token/create",
   async (
-    credentials: { username?: string; password?: string; [key: string]: any },
+    credentials: { login?: string; password?: string;[key: string]: any },
     { rejectWithValue },
   ) => {
     try {
@@ -45,9 +45,7 @@ export const setAuthorized = createAsyncThunk(
     try {
       return state;
     } catch (error) {
-      return rejectWithValue(
-        error instanceof Error ? error.message : "Unknown error",
-      );
+      console.error(error)
     }
   },
 );
@@ -56,13 +54,11 @@ export const logout = createAsyncThunk(
   "logout",
   async () => {
     try {
-      const response = await fetch("/api/logout", {method: "POST" });
+      const response = await fetch("/api/logout", { method: "POST" });
       if (!response.ok) throw new Error("Authentication failed");
       return true
     } catch (error) {
-      return rejectWithValue(
-        error instanceof Error ? error.message : "Unknown error",
-      );
+      console.error(error)
     }
   },
 );
@@ -109,7 +105,7 @@ const tokenSlice = createSlice({
       })
       .addCase(setAuthorized.fulfilled, (state, action) => {
         state.loading = false;
-        state.authorized = action.payload;
+        state.authorized = action.payload ?? false;
         state.expiresAt = null;
       })
       .addCase(setAuthorized.rejected, (state, action) => {
@@ -119,5 +115,5 @@ const tokenSlice = createSlice({
   },
 });
 
-export const { clearToken, clearError } = tokenSlice.actions;
+export const { clearError } = tokenSlice.actions;
 export default tokenSlice.reducer;

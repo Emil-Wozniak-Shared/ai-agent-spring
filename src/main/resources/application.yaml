@@ -35,3 +35,5 @@ logging:
     org.springframework.web.servlet.DispatcherServlet: DEBUG
 app:
   features: pubmed,orcid
+  jwt:
+    secret: 5JzoMbk6E5qIqHSuBTgeQCARtUsxAkBiHwdjXOSW8kWdXzYmP3X51C0

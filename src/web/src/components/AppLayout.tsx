@@ -2,17 +2,17 @@ import React from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "~/store/hooks";
 import { toggleTheme, checkBackendConnection } from "~/store/slices/appSlice";
-import { clearToken } from "~/store/slices/tokenSlice";
 import NotificationCenter from "~/components/NotificationCenter";
 import Navbar from "./Navbar";
 import Cookies from 'universal-cookie';
 import { setAuthorized } from "../store/slices/tokenSlice";
 import { useCookies } from 'react-cookie'
+import { TOKEN_NAME } from "~/store/constants";
 
-interface LayoutProps {}
+interface LayoutProps { }
 
 const AppLayout: React.FC<LayoutProps> = () => {
-  const [cookies, setCookie, removeCookie] = useCookies(['X-TOKEN']);
+  const [cookies, setCookie, removeCookie] = useCookies([TOKEN_NAME]);
   const location = useLocation();
   const dispatch = useAppDispatch();
   const { theme, backendStatus } = useAppSelector((state) => state.app);
@@ -31,7 +31,8 @@ const AppLayout: React.FC<LayoutProps> = () => {
   };
 
   const handleLogout = () => {
-    dispatch(clearToken());
+    removeCookie(TOKEN_NAME)
+    dispatch(setAuthorized(false));
   };
 
   return (

@@ -9,11 +9,13 @@ import org.springframework.security.core.userdetails.UserDetails
 import pl.ejdev.agent.infrastructure.orcid.dao.OrcidProfile
 import pl.ejdev.agent.infrastructure.orcid.dao.OrcidProfileTable
 
-class User(id: EntityID<Long>) : Entity<Long>(id), UserDetails {
-    companion object : EntityClass<Long, User>(table = UserTable, entityType = User::class.java)
+class UserEntity(id: EntityID<Long>) : Entity<Long>(id), UserDetails {
+    companion object : EntityClass<Long, UserEntity>(table = UserTable, entityType = UserEntity::class.java)
 
     var email by UserTable.email
     var name by UserTable.name
+    var firstName by UserTable.firstName
+    var lastName by UserTable.lastName
 
     @get:JvmName("rawPassword")
     var password by UserTable.password

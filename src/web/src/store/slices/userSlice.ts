@@ -3,10 +3,12 @@ import {
   createAsyncThunk,
   type PayloadAction,
 } from "@reduxjs/toolkit";
-import {apiClient} from '../api'
+import { apiClient } from '../api'
 
 export interface User {
   name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
   active: boolean;
@@ -16,10 +18,11 @@ export interface User {
 }
 
 export const emptyUser: User = {
-  id: null,
   name: "",
+  firstName: '',
+  lastName: '',
   email: "",
-  hashPassword: "",
+  password: "",
   active: true,
   createdAt: new Date(),
   updatedAt: new Date(),
@@ -45,14 +48,14 @@ export const fetchAllUsers = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await apiClient.request(
-          "/api/users", {
+        "/api/users", {
         headers: { Accept: "application/json" },
       });
       if (!response.ok) throw new Error("Failed to fetch users");
       const json = await response.json()
       return json.users;
     } catch (error) {
-        console.error(error)
+      console.error(error)
       return rejectWithValue(
         error instanceof Error ? error.message : "Unknown error",
       );
@@ -102,11 +105,11 @@ export const createUser = createAsyncThunk(
 export const updateUser = createAsyncThunk(
   "users/update",
   async (
-    { id, userData }: { id: number; userData: Partial<User> },
+    { email, userData }: { email: string; userData: Partial<User> },
     { rejectWithValue },
   ) => {
     try {
-      const response = await apiClient.request(`/api/users/${id}`, {
+      const response = await apiClient.request(`/api/users/${email}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -184,12 +187,12 @@ const userSlice = createSlice({
       .addCase(updateUser.fulfilled, (state, action) => {
         state.loading = false;
         const index = state.users.findIndex(
-          (user) => user.id === action.payload.id,
+          (user) => user.email === action.payload.email,
         );
         if (index !== -1) {
           state.users[index] = action.payload;
         }
-        if (state.currentUser?.id === action.payload.id) {
+        if (state.currentUser?.email === action.payload.email) {
           state.currentUser = action.payload;
         }
       })

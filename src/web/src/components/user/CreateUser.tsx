@@ -45,6 +45,20 @@ const CreateNewUser = () => {
           required
         />
         <Input
+          type="text"
+          placeholder="First name"
+          value={newUser.firstName}
+          onChange={(e) => setNewUser({ ...newUser, firstName: e.target.value })}
+          required
+        />
+        <Input
+          type="text"
+          placeholder="Last name"
+          value={newUser.lastName}
+          onChange={(e) => setNewUser({ ...newUser, lastName: e.target.value })}
+          required
+        />
+        <Input
           type="email"
           placeholder="Email"
           value={newUser.email}

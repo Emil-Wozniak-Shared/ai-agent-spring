@@ -1,37 +1,38 @@
 import React from "react";
 import { useAppSelector, useAppDispatch } from "~/store/hooks";
 import {
-  createToken,
   clearError,
+  createToken,
   logout,
 } from "../store/slices/tokenSlice";
 import { addNotification } from "~/store/slices/appSlice";
 import { Label } from "@radix-ui/react-label";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
-import {useCookies} from 'react-cookie'
+import { useCookies } from 'react-cookie'
+import { TOKEN_NAME } from "~/store/constants";
 
 const Login: React.FC = () => {
-  const [cookies, setCookie, removeCookie] = useCookies(['X-TOKEN']);
+  const [cookies, setCookie, removeCookie] = useCookies([TOKEN_NAME]);
   const dispatch = useAppDispatch();
   const { authorized, loading, error } = useAppSelector((state) => state.token);
   const [credentials, setCredentials] = React.useState({
-    username: "",
+    login: "",
     password: "",
   });
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await dispatch(createToken(credentials)).unwrap();
-      setCookie('X-TOKEN', res.token)
+      const response = await dispatch(createToken(credentials)).unwrap();
+      setCookie(TOKEN_NAME, response.token)
       dispatch(
         addNotification({
           message: "Login successful!",
           type: "success",
         }),
       );
-      setCredentials({ username: "", password: "" });
+      setCredentials({ login: "", password: "" });
     } catch (error) {
       dispatch(
         addNotification({
@@ -43,7 +44,7 @@ const Login: React.FC = () => {
   };
 
   const handleLogout = () => {
-    removeCookie()
+    removeCookie(TOKEN_NAME)
     dispatch(logout());
     dispatch(
       addNotification({
@@ -76,13 +77,13 @@ const Login: React.FC = () => {
         className="shadow-md rounded px-8 pt-6 pb-8 mb-4"
       >
         <div className="mb-6">
-          <Label htmlFor="username">Username:</Label>
+          <Label htmlFor="login">Login:</Label>
           <Input
-            id="username"
+            id="login"
             type="text"
-            value={credentials.username}
+            value={credentials.login}
             onChange={(e) =>
-              setCredentials({ ...credentials, username: e.target.value })
+              setCredentials({ ...credentials, login: e.target.value })
             }
             required
             className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight shadow-outline"

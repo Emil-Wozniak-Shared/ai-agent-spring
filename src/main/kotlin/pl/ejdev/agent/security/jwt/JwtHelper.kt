@@ -3,56 +3,48 @@ package pl.ejdev.agent.security.jwt
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jws
 import io.jsonwebtoken.Jwts
-import io.jsonwebtoken.SignatureAlgorithm
-import org.springframework.security.core.userdetails.UserDetails
+import io.jsonwebtoken.SignatureAlgorithm.HS256
+import org.springframework.core.env.ConfigurableEnvironment
+import org.springframework.core.env.get
+import pl.ejdev.agent.infrastructure.user.dao.UserEntity
 import java.time.Instant
 import java.time.temporal.ChronoUnit
-import java.util.Base64
-import java.util.Date
+import java.util.*
 import java.util.function.Function
 import javax.crypto.spec.SecretKeySpec
 
-object JwtHelper {
-    private const val secret = "5JzoMbk6E5qIqHSuBTgeQCARtUsxAkBiHwdjXOSW8kWdXzYmP3X51C0"
+private typealias BearerToken = String
+
+class JwtHelper(env: ConfigurableEnvironment) {
+    private val secret = env["app.jwt.secret"]!!
     private val decoder = Base64.getDecoder()
     private val validity = Instant.now().plus(60, ChronoUnit.MINUTES)
+    private val signingKey = SecretKeySpec(decoder.decode(secret), HS256.jcaName)
 
-    fun createToken(claims: MutableMap<String, String>, subject: String): String {
-        val expiryDate: Date =
-            Date.from(Instant.ofEpochMilli(System.currentTimeMillis() + validity.epochSecond))
-        val key = SecretKeySpec(decoder.decode(secret), SignatureAlgorithm.HS256.jcaName)
-        return Jwts.builder()
-            .setClaims(claims)
-            .setSubject(subject)
-            .setIssuedAt(Date(System.currentTimeMillis()))
-            .setExpiration(expiryDate)
-            .signWith(key)
-            .compact()
-    }
+    fun createToken(claims: MutableMap<String, String>, subject: String): String = Jwts.builder()
+        .setClaims(claims)
+        .setSubject(subject)
+        .setIssuedAt(Date(System.currentTimeMillis()))
+        .setExpiration(  Date.from(Instant.ofEpochMilli(System.currentTimeMillis() + validity.epochSecond)))
+        .signWith(signingKey)
+        .compact()
 
 
-    fun extractUsername(bearerToken: String): String = extractClaimBody(bearerToken, Claims::getSubject)
+    fun extractEmail(bearerToken: String): String = extractClaimBody(bearerToken, Claims::getSubject)
 
-    fun <T> extractClaimBody(
-        bearerToken: String,
-        claimsResolver: Function<Claims, T>
-    ): T {
-        val jwsClaims = extractClaims(bearerToken)
-        return claimsResolver.apply(jwsClaims.getBody())
-    }
+    fun <T> extractClaimBody(bearerToken: String, claimsResolver: Function<Claims, T>): T =
+        claimsResolver.apply(bearerToken.extractClaims().getBody())
 
-    private fun extractClaims(bearerToken: String): Jws<Claims> = Jwts.parserBuilder()
+    fun isValidToken(token: String, userDetails: UserEntity): Boolean =
+        extractEmail(token) == userDetails.email && !token.isTokenExpired()
+
+    private fun BearerToken.isTokenExpired(): Boolean = this.extractExpiry()!!.before(Date())
+
+    private fun BearerToken.extractClaims(): Jws<Claims> = Jwts.parserBuilder()
         .setSigningKey(secret)
         .build()
-        .parseClaimsJws(bearerToken)
+        .parseClaimsJws(this)
 
-    fun validateToken(token: String, userDetails: UserDetails): Boolean {
-        val userName = extractUsername(token)
-        return userName == userDetails.username && !isTokenExpired(token)
-    }
-
-    private fun isTokenExpired(bearerToken: String?): Boolean = extractExpiry(bearerToken)!!.before(Date())
-
-    fun extractExpiry(bearerToken: String?): Date? = extractClaimBody(bearerToken!!) { it.expiration }
+    private fun BearerToken.extractExpiry(): Date? = extractClaimBody(this) { it.expiration }
 
 }

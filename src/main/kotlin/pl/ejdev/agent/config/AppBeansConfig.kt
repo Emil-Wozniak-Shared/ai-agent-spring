@@ -41,6 +41,7 @@ import pl.ejdev.agent.security.AppAuthenticationProvider
 import pl.ejdev.agent.security.UserDetailsServiceProvider
 import pl.ejdev.agent.security.jwt.JwtAuthenticationEntryPoint
 import pl.ejdev.agent.security.jwt.JwtFilter
+import pl.ejdev.agent.security.jwt.JwtHelper
 import pl.ejdev.agent.security.jwt.TokenHandler
 import pl.ejdev.agent.security.jwt.TokenService
 
@@ -81,6 +82,7 @@ object AppBeansConfig {
         bean<SecurityAutoConfiguration>()
         bean<UserDetailsServiceAutoConfiguration>()
         bean<SecurityContextLogoutHandler> { SecurityContextLogoutHandler() }
+        bean<JwtHelper> { JwtHelper(env) }
         bean<SecurityFilterChain> {
             val httpSecurity = ref<HttpSecurity>()
             httpSecurity {
@@ -106,7 +108,7 @@ object AppBeansConfig {
                     }
                     deleteCookies("JSESSIONID", "X-TOKEN", "authToken")
                 }
-                addFilterBefore<UsernamePasswordAuthenticationFilter>(JwtFilter(ref()))
+                addFilterBefore<UsernamePasswordAuthenticationFilter>(JwtFilter(ref(), ref()))
                 exceptionHandling { authenticationEntryPoint = ref<JwtAuthenticationEntryPoint>() }
             }
             httpSecurity.build()
