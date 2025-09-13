@@ -6,6 +6,7 @@ import {
 import { apiClient } from '../api'
 
 export interface User {
+  id: number | null
   name: string;
   firstName: string;
   lastName: string;
@@ -18,6 +19,7 @@ export interface User {
 }
 
 export const emptyUser: User = {
+  id: null,
   name: "",
   firstName: '',
   lastName: '',
@@ -131,6 +133,9 @@ const userSlice = createSlice({
   name: "users",
   initialState,
   reducers: {
+    setCurrentUser: (state, action) => {
+      state.currentUser = action.payload
+    },
     clearError: (state) => {
       state.error = null;
     },
@@ -203,5 +208,5 @@ const userSlice = createSlice({
   },
 });
 
-export const { clearError, clearCurrentUser } = userSlice.actions;
+export const { clearError, clearCurrentUser, setCurrentUser } = userSlice.actions;
 export default userSlice.reducer;

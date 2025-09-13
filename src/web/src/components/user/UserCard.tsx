@@ -101,6 +101,8 @@ const UserCard: React.FC<UserCardProps> = ({
         </CardAction>
       </CardHeader>
       <CardContent>
+        <p>First name: {user.firstName}</p>
+        <p>Last name: {user.lastName}</p>
         <p>Email: '{user.email}'</p>
         <p>
           Active:{" "}

@@ -27,18 +27,18 @@ const router = createBrowserRouter([
       { path: "/documents", element: <Documents /> },
       { path: "/pubmed", element: <PubmedSearch /> },
       { path: "/login", element: <Login /> },
-      { path: "/profile", element: <Profile /> },
+      { path: "/profile/:name", element: <Profile /> },
       { path: "*", element: <NotFound /> },
     ],
   },
 ]);
 
 const AppWrapper = () => (
-    <CookiesProvider defaultSetOptions={{ path: '/' }}>
-        <Provider store={store}>
-            <RouterProvider router={router} />
-        </Provider>
-    </CookiesProvider>
+  <CookiesProvider defaultSetOptions={{ path: '/' }}>
+    <Provider store={store}>
+      <RouterProvider router={router} />
+    </Provider>
+  </CookiesProvider>
 );
 
 export default AppWrapper;

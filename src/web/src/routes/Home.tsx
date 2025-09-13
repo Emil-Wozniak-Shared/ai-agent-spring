@@ -86,7 +86,11 @@ const AuthorizedActions = () => {
       )}
       <br />
       {users && users.length === 1 && (
-        <Link to="/profile">{"Profile"}</Link>
+        <div>
+          {users.map(user => (
+            <Link to={`/profile/${user.name}`}>{"Profile"}</Link>
+          ))}
+        </div>
       )}
     </div>
   )

@@ -40,7 +40,7 @@ fun routerFunction(
         }
         "/users".nest {
             GET("", userHandler::getAllUsers)
-            GET("/{id}", userHandler::getUserById)
+            GET("/{id}", userHandler::getUserByEmail)
             POST("", userHandler::createUser)
             PUT("/{id}", userHandler::updateUser)
         }

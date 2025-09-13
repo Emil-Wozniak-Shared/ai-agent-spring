@@ -28,7 +28,7 @@ class UserHandler(
             .body(mapOf("error" to "Failed to retrieve users"))
     }
 
-    fun getUserById(request: ServerRequest): ServerResponse {
+    fun getUserByEmail(request: ServerRequest): ServerResponse {
         return try {
             val id = request.pathVariable("id").toLongOrNull()
                 ?: return ServerResponse.badRequest()
