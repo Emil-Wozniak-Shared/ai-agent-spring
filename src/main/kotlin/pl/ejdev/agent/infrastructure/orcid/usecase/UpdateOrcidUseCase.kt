@@ -7,12 +7,13 @@ import pl.ejdev.agent.infrastructure.orcid.dto.UpdateOrcidEvent
 import pl.ejdev.agent.infrastructure.orcid.dto.UpdateOrcidQuery
 import pl.ejdev.agent.infrastructure.orcid.dto.UpdateOrcidResult
 import pl.ejdev.agent.infrastructure.orcid.port.`in`.UpdateOrcidPort
+import pl.ejdev.agent.security.utils.userEntity
 
 class UpdateOrcidUseCase(
     private val updateOrcidPort: UpdateOrcidPort
 ) : UseCase<UpdateOrcidQuery, UpdateOrcidResult> {
     override fun handle(query: UpdateOrcidQuery): UpdateOrcidResult {
-        val userEntityDto = SecurityContextHolder.getContext().authentication.principal as UserEntity
+        val userEntityDto = SecurityContextHolder.getContext().userEntity
         return updateOrcidPort.handle(UpdateOrcidEvent(query.id, userEntityDto.email))
     }
 }

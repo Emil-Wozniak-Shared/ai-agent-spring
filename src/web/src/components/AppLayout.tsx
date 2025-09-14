@@ -4,12 +4,13 @@ import { useAppSelector, useAppDispatch } from "~/store/hooks";
 import { toggleTheme, checkBackendConnection } from "~/store/slices/appSlice";
 import NotificationCenter from "~/components/NotificationCenter";
 import Navbar from "./Navbar";
-import Cookies from 'universal-cookie';
 import { setAuthorized } from "../store/slices/tokenSlice";
-import { useCookies } from 'react-cookie'
+import { useCookies } from "react-cookie";
 import { TOKEN_NAME } from "~/store/constants";
+import { fetchAllUsers } from "~/store/slices/userSlice";
+import { findOrcid } from "~/store/slices/orcidSlice";
 
-interface LayoutProps { }
+interface LayoutProps {}
 
 const AppLayout: React.FC<LayoutProps> = () => {
   const [cookies, setCookie, removeCookie] = useCookies([TOKEN_NAME]);
@@ -18,7 +19,9 @@ const AppLayout: React.FC<LayoutProps> = () => {
   const { theme, backendStatus } = useAppSelector((state) => state.app);
   React.useEffect(() => {
     dispatch(checkBackendConnection());
-    dispatch(setAuthorized(true))
+    dispatch(setAuthorized(true));
+    dispatch(fetchAllUsers());
+    dispatch(findOrcid());
     const interval = setInterval(() => {
       dispatch(checkBackendConnection());
     }, 30000);
@@ -31,7 +34,7 @@ const AppLayout: React.FC<LayoutProps> = () => {
   };
 
   const handleLogout = () => {
-    removeCookie(TOKEN_NAME)
+    removeCookie(TOKEN_NAME);
     dispatch(setAuthorized(false));
   };
 

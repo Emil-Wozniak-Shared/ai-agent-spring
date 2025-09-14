@@ -16,7 +16,7 @@ import PubmedSearch from "./routes/PubmedSearch";
 import Login from "./routes/Login";
 import Profile from "./routes/Profile";
 import { RouteErrorElement } from "./components/ErrorBoundary";
-import { CookiesProvider } from 'react-cookie';
+import { CookiesProvider } from "react-cookie";
 
 const router = createBrowserRouter([
   {
@@ -34,7 +34,7 @@ const router = createBrowserRouter([
 ]);
 
 const AppWrapper = () => (
-  <CookiesProvider defaultSetOptions={{ path: '/' }}>
+  <CookiesProvider defaultSetOptions={{ path: "/" }}>
     <Provider store={store}>
       <RouterProvider router={router} />
     </Provider>

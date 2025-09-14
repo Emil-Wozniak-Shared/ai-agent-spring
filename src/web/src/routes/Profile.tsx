@@ -28,39 +28,29 @@ const Profile = () => {
   const { orcid } = useAppSelector((state) => state.orcid);
 
   if (users.length === 0) {
-    useEffect(() => {
-      if (users.length === 0) {
-        dispatch(fetchAllUsers());
-      }
-    }, []);
     return <div>Loading...</div>;
-  }
-
-  if (orcid.id === null) {
-    const user = users.find((it) => it.name == name)!!;
-    useEffect(() => {
-      console.log("orcid: ", orcid);
-      if (orcid.id === null) {
-        dispatch(findOrcid());
-      }
-    }, []);
-
-    <section id="profiles">
-      <UserProfile user={user!!} />
-      <OrcidProfile user={user} orcid={orcid} />
-    </section>;
   }
 
   const user = users.find((it) => it.name == name)!!;
 
+  if (orcid.id === null) {
+    return (
+      <section id="profiles">
+        <UserProfile user={user!!} />
+        <OrcidProfile user={user} orcid={orcid} />
+      </section>
+    );
+  }
+
   useEffect(() => {
     if (orcid.id !== null) {
-      const payload = {
-        query: orcid.id!!,
-        email: orcid.email,
-        maxResults: 20,
-      };
-      dispatch(searchPubmedArticles(payload));
+      dispatch(
+        searchPubmedArticles({
+          query: orcid.id!!,
+          email: orcid.email,
+          maxResults: 20,
+        }),
+      );
     }
   }, [orcid]);
 
