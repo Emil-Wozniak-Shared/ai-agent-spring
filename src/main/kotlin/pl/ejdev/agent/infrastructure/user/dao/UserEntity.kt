@@ -6,7 +6,7 @@ import org.jetbrains.exposed.v1.dao.EntityClass
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
-import pl.ejdev.agent.infrastructure.orcid.dao.OrcidProfile
+import pl.ejdev.agent.infrastructure.orcid.dao.OrcidProfileEntity
 import pl.ejdev.agent.infrastructure.orcid.dao.OrcidProfileTable
 
 class UserEntity(id: EntityID<Long>) : Entity<Long>(id), UserDetails {
@@ -25,7 +25,7 @@ class UserEntity(id: EntityID<Long>) : Entity<Long>(id), UserDetails {
     var roles by UserTable.roles
 
     // One-to-one relationship - corrected reference name
-    val orcidProfile by OrcidProfile.Companion optionalBackReferencedOn OrcidProfileTable.userId
+    val orcidProfile by OrcidProfileEntity.Companion optionalBackReferencedOn OrcidProfileTable.userId
 
     override fun getAuthorities(): Collection<GrantedAuthority> = roles.map { SimpleGrantedAuthority("ROLE_$it") }
     override fun getPassword(): String = password

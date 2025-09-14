@@ -53,7 +53,8 @@ fun routerFunction(
             POST("/search/articles/{ids}", pubmedArticlesHandler::searchBy)
             POST("/articles/{id}/abstract", pubmedArticlesHandler::abstract)
         }
-        ("orcid" and contentType(APPLICATION_JSON)).nest {
+        ("/orcid" and contentType(APPLICATION_JSON)).nest {
+            GET(orcidHandler::find)
             PUT(orcidHandler::update)
         }
         ("/token" and contentType(APPLICATION_JSON)).nest {

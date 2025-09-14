@@ -3,7 +3,7 @@ import {
   createAsyncThunk,
   type PayloadAction,
 } from "@reduxjs/toolkit";
-import {apiClient} from '../api'
+import { apiClient } from "../api";
 
 export interface PubmedArticle {
   id: string;

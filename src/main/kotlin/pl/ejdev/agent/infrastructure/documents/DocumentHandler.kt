@@ -19,16 +19,12 @@ class DocumentHandler(
         request.body<List<Document>>()
             .let(::CreateDocumentQuery)
             .runCatching { createDocumentUseCase.handle(this) }
-            .map { result -> ServerResponse.ok().contentType(APPLICATION_JSON).body(result) }
+            .map { ServerResponse.ok().contentType(APPLICATION_JSON).body(it) }
             .getOrElse { ServerResponse.badRequest().body(mapOf("error" to "Failed to add documents")) }
 
     fun search(request: ServerRequest): ServerResponse =
         request.body<SearchDocumentRequest>()
-            .let { (query: String, limit: Int, threshold: Double, keywords) ->
-                SearchDocumentQuery(query, limit, threshold, keywords.map {
-                    SearchDocumentQuery.Keyword(it.key, it.value)
-                })
-            }
+            .let { SearchDocumentQuery.from(it) }
             .let(searchDocumentUseCase::handle)
-            .let { results -> ServerResponse.ok().contentType(APPLICATION_JSON).body(results) }
+            .let { ServerResponse.ok().contentType(APPLICATION_JSON).body(it) }
 }

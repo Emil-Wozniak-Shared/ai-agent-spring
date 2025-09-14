@@ -7,6 +7,7 @@ import pl.ejdev.agent.infrastructure.pubmed.port.out.search.articles.SearchArtic
 import pl.ejdev.agent.infrastructure.pubmed.service.PubmedRestClient
 import pl.ejdev.agent.infrastructure.pubmed.service.PubmedRestClient.Companion.EUtils
 import pl.ejdev.agent.infrastructure.pubmed.service.PubmedRestClient.Companion.Params
+import pl.ejdev.agent.infrastructure.pubmed.service.PubmedRestClient.Companion.QueryKeys
 import pl.ejdev.agent.utils.get
 import pl.ejdev.agent.utils.queryParams
 import pl.ejdev.agent.utils.uriEncode
@@ -19,9 +20,9 @@ class SearchArticlesAdapter(
             queryParams(
                 Params.DB_PUBMED,
                 Params.RETURN_MODE_JSON,
-                "term" to event.query.uriEncode(),
-                "email" to event.email.uriEncode(),
-                "retmax" to event.maxResults
+                QueryKeys.TERM to event.query.uriEncode(),
+                QueryKeys.EMAIL to event.email.uriEncode(),
+                QueryKeys.RESULT_MAX to event.maxResults
             )
         }
         .retrieve()

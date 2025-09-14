@@ -4,7 +4,7 @@ import org.jetbrains.exposed.v1.core.StdOutSqlLogger
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
-import pl.ejdev.agent.infrastructure.orcid.dao.OrcidProfile
+import pl.ejdev.agent.infrastructure.orcid.dao.OrcidProfileEntity
 import pl.ejdev.agent.infrastructure.user.dao.UserEntity
 import pl.ejdev.agent.domain.UserDto
 import pl.ejdev.agent.infrastructure.user.dao.UserTable
@@ -43,7 +43,7 @@ class UserRepositoryImpl(
                     updatedAt = dto.updatedAt
                     roles = dto.roles
                 }
-                OrcidProfile.new {
+                OrcidProfileEntity.new {
                     this.userEntity = newUserEntity
                     email = newUserEntity.email
                     orcid = null

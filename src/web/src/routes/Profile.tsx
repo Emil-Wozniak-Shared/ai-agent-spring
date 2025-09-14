@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useMemo } from "react";
 import { useAppSelector, useAppDispatch } from "~/store/hooks";
 import {
   fetchAllUsers,
@@ -7,24 +7,98 @@ import {
   type User,
   emptyUser,
 } from "../store/slices/userSlice";
-import { updateOrcid } from "../store/slices/orcidSlice";
+import {
+  defaultOrcid,
+  findOrcid,
+  updateOrcid,
+  type Orcid,
+} from "../store/slices/orcidSlice";
 import { Label } from "@radix-ui/react-label";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import UserCard from "~/components/user/UserCard";
 import { addNotification } from "~/store/slices/appSlice";
 import { useParams } from "react-router";
+import { searchPubmedArticles } from "~/store/slices/pubmedSlice";
 
 const Profile = () => {
   const dispatch = useAppDispatch();
   const { name } = useParams();
-  const { users, loading, error } = useAppSelector((state) => state.users);
+  const { users } = useAppSelector((state) => state.users);
+  const { orcid } = useAppSelector((state) => state.orcid);
+
+  useEffect(() => {
+    if (users.length === 0) {
+      dispatch(fetchAllUsers());
+    }
+    if (orcid === defaultOrcid) {
+      dispatch(findOrcid());
+    }
+    if (orcid !== defaultOrcid) {
+      const payload = {
+        query: orcid.id!!,
+        email: orcid.email,
+        maxResults: 20,
+      };
+      dispatch(searchPubmedArticles(payload));
+    }
+  }, [orcid, users]);
+
+  if (users.length === 0) {
+    return <div>Loading...</div>;
+  }
 
   const user = users.find((it) => it.name == name)!!;
+
   return (
     <section id="profiles">
       <UserProfile user={user!!} />
-      <OrcidProfile user={user} />
+      {orcid !== null && (
+        <>
+          <OrcidProfile user={user} orcid={orcid} />
+          <Publications orcid={orcid} />
+        </>
+      )}
+    </section>
+  );
+};
+
+const Publications = ({ orcid }: { orcid: Orcid }) => {
+  const dispatch = useAppDispatch();
+  const { articles } = useAppSelector((state) => state.pubmed);
+  const fetchDocs = async () => {
+    try {
+      const payload = {
+        query: orcid.id!!,
+        email: orcid.email,
+        maxResults: 20,
+      };
+      await dispatch(searchPubmedArticles(payload)).unwrap();
+    } catch (error) {
+      dispatch(
+        addNotification({
+          message: "Failed to fetch documents",
+          type: "error",
+        }),
+      );
+    }
+  };
+  return (
+    <section id="publications">
+      <ul className="rounded-lg shadow divide-y divide-gray-200 max-w-sm">
+        {articles.map((article) => (
+          <li key={article.id} className="px-6 py-4">
+            <h4 className="font-semibold text-lg pr-2">{article.id}</h4>
+            <div className="flex justify-between">
+              <span className="text-gray-500 text-md">{article.title}</span>
+            </div>
+            <p className="text-gray-700">{article.abstract}</p>
+          </li>
+        ))}
+      </ul>
+      <div>
+        <Button onClick={fetchDocs}>Fetch Publications</Button>
+      </div>
     </section>
   );
 };
@@ -66,9 +140,8 @@ const UserProfile = ({ user }: { user: User }) => {
   );
 };
 
-const OrcidProfile = ({ user }: { user: User }) => {
+const OrcidProfile = ({ user, orcid }: { user: User; orcid: Orcid }) => {
   const dispatch = useAppDispatch();
-  const { orcid, loading, error } = useAppSelector((state) => state.orcid);
   const [orcidState, setOrcidState] = React.useState(orcid);
   const sendUpdateOrcid = (e: React.FormEvent) => {
     e.preventDefault();
@@ -89,7 +162,7 @@ const OrcidProfile = ({ user }: { user: User }) => {
     <section id="orcid-section">
       <form
         onSubmit={sendUpdateOrcid}
-        className="shadow-md rounded px-8 pt-6 pb-8 mb-4"
+        className="shadow-md rounded px-8 pt-2 mb-2"
       >
         <div className="mb-6 flex flex-row">
           <Label htmlFor="orcid-id">Orcid ID:</Label>
@@ -104,7 +177,7 @@ const OrcidProfile = ({ user }: { user: User }) => {
             className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight shadow-outline"
           />
           <Button type="submit" variant="outline">
-            {loading ? "Updating..." : "Update"}
+            {"Update"}
           </Button>
         </div>
       </form>

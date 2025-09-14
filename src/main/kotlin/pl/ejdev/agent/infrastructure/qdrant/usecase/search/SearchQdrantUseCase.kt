@@ -24,8 +24,6 @@ class SearchQdrantUseCase(
         query,
         threshold,
         limit,
-        keywords.map {
-            SearchQdrantEvent.Keyword(it.key, it.value)
-        }
+        keywords.map { SearchQdrantEvent.Keyword(it.key, it.value) }
     )
 }
