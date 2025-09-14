@@ -4,7 +4,11 @@ import com.fasterxml.jackson.annotation.JsonProperty
 
 @Suppress("SpellCheckingInspection")
 data class ESearchResultResponse(
-    var header: Header = Header(),
+    var header: Header,
     @field:JsonProperty("esearchresult")
-    val result: ESearchResult = ESearchResult(),
-)
+    val result: ESearchResult,
+) {
+    companion object {
+        val Empty = ESearchResultResponse(Header(), ESearchResult())
+    }
+}

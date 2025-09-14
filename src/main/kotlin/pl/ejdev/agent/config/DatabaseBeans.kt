@@ -12,6 +12,8 @@ import org.postgresql.Driver
 import org.springframework.context.support.BeanDefinitionDsl
 import org.springframework.core.env.get
 import pl.ejdev.agent.infrastructure.orcid.dao.OrcidProfileTable
+import pl.ejdev.agent.infrastructure.pubmed.dao.ArticleTable
+import pl.ejdev.agent.infrastructure.user.dao.UserArticleTable
 import pl.ejdev.agent.infrastructure.user.dao.UserTable
 
 @OptIn(ExperimentalDatabaseMigrationApi::class)
@@ -27,8 +29,10 @@ fun BeanDefinitionDsl.dbConfiguration() {
                 addLogger(StdOutSqlLogger)
                 UserTable.createIfNotExist()
                 OrcidProfileTable.createIfNotExist()
+                ArticleTable.createIfNotExist()
+                UserArticleTable.createIfNotExist()
                 MigrationUtils.statementsRequiredForDatabaseMigration(
-                    UserTable, OrcidProfileTable,
+                    UserTable, OrcidProfileTable, ArticleTable, UserArticleTable,
                     withLogs = true,
                 )
                 .forEach { exec(it) }

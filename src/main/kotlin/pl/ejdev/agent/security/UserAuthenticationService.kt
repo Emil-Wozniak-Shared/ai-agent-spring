@@ -1,4 +1,4 @@
-package pl.ejdev.agent.infrastructure.user.adapter
+package pl.ejdev.agent.security
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -18,7 +18,7 @@ class UserAuthenticationService(
             email = "admin@agent.pl",
             password = passwordEncoder.encode("admin"),
             roles = listOf(SimpleGrantedAuthority("ROLE_ADMIN")).map { a ->
-                Authority.from(a)
+                Authority.Companion.from(a)
             }
         )
         userRepository.save(admin)

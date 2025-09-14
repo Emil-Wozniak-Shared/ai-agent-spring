@@ -15,7 +15,8 @@ import pl.ejdev.agent.utils.uriEncode
 class SearchArticlesAdapter(
     private val pubmed: PubmedRestClient,
 ) : SearchArticlesPort {
-    override fun handle(event: SearchArticlesEvent): ESearchResultResponse = pubmed.client
+    override fun handle(event: SearchArticlesEvent): ESearchResultResponse = pubmed
+        .client
         .get(EUtils.SEARCH) {
             queryParams(
                 Params.DB_PUBMED,
@@ -26,6 +27,6 @@ class SearchArticlesAdapter(
             )
         }
         .retrieve()
-        .body<ESearchResultResponse>()
-        ?: ESearchResultResponse()
+        .runCatching { body<ESearchResultResponse>() }
+        .getOrElse { ESearchResultResponse.Empty }!!
 }

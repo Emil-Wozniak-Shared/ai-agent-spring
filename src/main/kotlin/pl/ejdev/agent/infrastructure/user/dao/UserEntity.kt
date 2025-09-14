@@ -25,7 +25,8 @@ class UserEntity(id: EntityID<Long>) : Entity<Long>(id), UserDetails {
     var roles by UserTable.roles
 
     // One-to-one relationship - corrected reference name
-    val orcidProfile by OrcidProfileEntity.Companion optionalBackReferencedOn OrcidProfileTable.userId
+    val orcidProfile by OrcidProfileEntity optionalBackReferencedOn OrcidProfileTable.userId
+    val articles by UserArticleEntity referrersOn UserArticleTable.user orderBy UserArticleTable.value
 
     override fun getAuthorities(): Collection<GrantedAuthority> = roles.map { SimpleGrantedAuthority("ROLE_$it") }
     override fun getPassword(): String = password
