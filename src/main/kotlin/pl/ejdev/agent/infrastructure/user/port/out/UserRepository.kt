@@ -8,6 +8,6 @@ interface UserRepository {
     fun findById(id: Long): UserEntity?
     fun save(userDto: UserDto): Long
     fun existsById(id: Long): Boolean
-    fun findByName(name: String): UserEntity?
+    fun findBy(name: String): UserEntity?
 }
 

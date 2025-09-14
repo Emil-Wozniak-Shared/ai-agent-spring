@@ -17,28 +17,6 @@ const Documents: React.FC = () => {
   const [searchQuery, setSearchQuery] = React.useState("");
   const [newDocs, setNewDocs] = React.useState([{ title: "", content: "" }]);
 
-  const handleSearch = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!searchQuery.trim()) return;
-
-    try {
-      await dispatch(searchDocuments({ query: searchQuery })).unwrap();
-      dispatch(
-        addNotification({
-          message: "Search completed successfully!",
-          type: "success",
-        }),
-      );
-    } catch (error) {
-      dispatch(
-        addNotification({
-          message: "Search failed",
-          type: "error",
-        }),
-      );
-    }
-  };
-
   return (
     <>
       <h1 className="text-4xl">Documents</h1>

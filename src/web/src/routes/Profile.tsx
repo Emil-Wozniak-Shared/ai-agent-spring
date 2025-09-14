@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 import { useAppSelector, useAppDispatch } from "~/store/hooks";
 import {
   fetchAllUsers,
@@ -11,23 +11,23 @@ import { updateOrcid } from "../store/slices/orcidSlice";
 import { Label } from "@radix-ui/react-label";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
-import UserCard from '~/components/user/UserCard';
-import { addNotification } from '~/store/slices/appSlice';
-import { useParams } from 'react-router';
+import UserCard from "~/components/user/UserCard";
+import { addNotification } from "~/store/slices/appSlice";
+import { useParams } from "react-router";
 
 const Profile = () => {
   const dispatch = useAppDispatch();
-  const { name } = useParams()
+  const { name } = useParams();
   const { users, loading, error } = useAppSelector((state) => state.users);
 
-  const user = users.find(it => it.name == name)
+  const user = users.find((it) => it.name == name)!!;
   return (
     <section id="profiles">
-      <OrcidProfile user={user} />
       <UserProfile user={user!!} />
+      <OrcidProfile user={user} />
     </section>
-  )
-}
+  );
+};
 
 const UserProfile = ({ user }: { user: User }) => {
   const dispatch = useAppDispatch();
@@ -62,9 +62,9 @@ const UserProfile = ({ user }: { user: User }) => {
         onSave={(userData) => handleUpdateUser(user.email!!, userData)}
         onCancel={() => setEditingUser(null)}
       />
-    </section >
-  )
-}
+    </section>
+  );
+};
 
 const OrcidProfile = ({ user }: { user: User }) => {
   const dispatch = useAppDispatch();
@@ -73,7 +73,7 @@ const OrcidProfile = ({ user }: { user: User }) => {
   const sendUpdateOrcid = (e: React.FormEvent) => {
     e.preventDefault();
     dispatch(updateOrcid(orcidState.id!!));
-  }
+  };
 
   let url = new URL("https://orcid.org/orcid-search/search");
 
@@ -85,39 +85,39 @@ const OrcidProfile = ({ user }: { user: User }) => {
   // Updating the URL with encoded query parameters
   url.search = params.toString();
 
-
   return (
     <section id="orcid-section">
-      <h4 className="text-lg">{"You can find Orcid ID here"}</h4>
       <form
         onSubmit={sendUpdateOrcid}
         className="shadow-md rounded px-8 pt-6 pb-8 mb-4"
       >
-        <div className="mb-6">
+        <div className="mb-6 flex flex-row">
           <Label htmlFor="orcid-id">Orcid ID:</Label>
           <Input
             id="orcid-id"
             type="text"
-            value={orcidState.id ?? ''}
+            value={orcidState.id ?? ""}
             onChange={(e) => {
-              setOrcidState({ ...orcidState, id: e.target.value })
+              setOrcidState({ ...orcidState, id: e.target.value });
             }}
             required
             className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight shadow-outline"
           />
+          <Button type="submit" variant="outline">
+            {loading ? "Updating..." : "Update"}
+          </Button>
         </div>
-        <Button type="submit" variant="outline">
-          {loading ? "Updating..." : "Update"}
-        </Button>
       </form>
-      <a target="_blank"
+      <a
+        target="_blank"
         rel="noopener noreferrer"
         href={url.toString()}
-        className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight shadow-outline">
+        className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight shadow-outline"
+      >
         {"Click here if you don't remember your ORCID ID"}
       </a>
     </section>
-  )
-}
+  );
+};
 
-export default Profile
+export default Profile;

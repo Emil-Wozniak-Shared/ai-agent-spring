@@ -3,10 +3,10 @@ import {
   createAsyncThunk,
   type PayloadAction,
 } from "@reduxjs/toolkit";
-import { apiClient } from '../api'
+import { apiClient } from "../api";
 
 export interface User {
-  id: number | null
+  id: number | null;
   name: string;
   firstName: string;
   lastName: string;
@@ -21,8 +21,8 @@ export interface User {
 export const emptyUser: User = {
   id: null,
   name: "",
-  firstName: '',
-  lastName: '',
+  firstName: "",
+  lastName: "",
   email: "",
   password: "",
   active: true,
@@ -49,15 +49,14 @@ export const fetchAllUsers = createAsyncThunk(
   "users/fetchAll",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await apiClient.request(
-        "/api/users", {
+      const response = await apiClient.request("/api/users", {
         headers: { Accept: "application/json" },
       });
       if (!response.ok) throw new Error("Failed to fetch users");
-      const json = await response.json()
+      const json = await response.json();
       return json.users;
     } catch (error) {
-      console.error(error)
+      console.error(error);
       return rejectWithValue(
         error instanceof Error ? error.message : "Unknown error",
       );
@@ -134,7 +133,7 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     setCurrentUser: (state, action) => {
-      state.currentUser = action.payload
+      state.currentUser = action.payload;
     },
     clearError: (state) => {
       state.error = null;
@@ -208,5 +207,6 @@ const userSlice = createSlice({
   },
 });
 
-export const { clearError, clearCurrentUser, setCurrentUser } = userSlice.actions;
+export const { clearError, clearCurrentUser, setCurrentUser } =
+  userSlice.actions;
 export default userSlice.reducer;

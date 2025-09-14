@@ -32,7 +32,7 @@ data class UserDto(
                 lastName,
                 email,
                 password = "****",
-                roles = roles.map { Authority.from(it) }
+                roles = roles
             )
         }
     }

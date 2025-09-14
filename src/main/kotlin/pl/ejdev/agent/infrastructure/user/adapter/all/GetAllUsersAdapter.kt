@@ -14,10 +14,10 @@ class GetAllUsersAdapter(
     override fun handle(event: GetAllUsersEvent): GetAllUsersResult {
         val context = SecurityContextHolder.getContext()
         val authentication = context.authentication
-        val isAdmin = authentication.authorities.any { it == Authority.ADMIN }
+        val isAdmin = authentication.authorities.any { it.authority.contains(Authority.ADMIN.name) }
         val data =
             if (isAdmin) userRepository.findAll()
-            else listOf(userRepository.findByName(authentication.name)!!)
+            else listOf(userRepository.findBy(authentication.name)!!)
         return GetAllUsersResult(data.map { UserDto.from(it) })
     }
 }

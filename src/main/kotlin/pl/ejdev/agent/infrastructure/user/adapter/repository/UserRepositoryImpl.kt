@@ -23,7 +23,7 @@ class UserRepositoryImpl(
         UserEntity.findById(id)
     }
 
-    override fun findByName(name: String): UserEntity? = transaction(database) {
+    override fun findBy(name: String): UserEntity? = transaction(database) {
         addLogger(StdOutSqlLogger)
         UserEntity.find { UserTable.name eq name }.firstOrNull()
     }
@@ -41,7 +41,7 @@ class UserRepositoryImpl(
                     active = dto.active
                     createdAt = dto.createdAt
                     updatedAt = dto.updatedAt
-                    roles = dto.roles.map { it.name }
+                    roles = dto.roles
                 }
                 OrcidProfile.new {
                     this.userEntity = newUserEntity
