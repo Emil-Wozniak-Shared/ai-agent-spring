@@ -49,7 +49,7 @@ private fun BeanDefinitionDsl.BeanSupplierContext.qdrantVectorStore(
 
 private fun QdrantClient.withCollection(collectionName: String, refresh: Boolean) = apply {
     val collectionExists = collectionExistsAsync(collectionName).get()
-    if (!collectionExists || refresh) {
+    if (!collectionExists && refresh) {
 //        deleteCollectionAsync(collectionName)
         val collection = CreateCollection.newBuilder()
             .setCollectionName(collectionName)

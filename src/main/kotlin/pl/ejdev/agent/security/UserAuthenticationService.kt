@@ -17,9 +17,7 @@ class UserAuthenticationService(
             lastName = "",
             email = "admin@agent.pl",
             password = passwordEncoder.encode("admin"),
-            roles = listOf(SimpleGrantedAuthority("ROLE_ADMIN")).map { a ->
-                Authority.Companion.from(a)
-            }
+            roles = listOf(SimpleGrantedAuthority("ROLE_ADMIN")).map (Authority::from)
         )
         userRepository.save(admin)
 

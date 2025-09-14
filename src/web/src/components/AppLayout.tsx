@@ -29,10 +29,6 @@ const AppLayout: React.FC<LayoutProps> = () => {
     return () => clearInterval(interval);
   }, [dispatch]);
 
-  const isActive = (path: string) => {
-    return location.pathname === path ? "nav-link active" : "nav-link";
-  };
-
   const handleLogout = () => {
     removeCookie(TOKEN_NAME);
     dispatch(setAuthorized(false));
