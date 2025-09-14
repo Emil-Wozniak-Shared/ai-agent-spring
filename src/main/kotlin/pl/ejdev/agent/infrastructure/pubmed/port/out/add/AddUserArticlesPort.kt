@@ -1,4 +1,4 @@
-package pl.ejdev.agent.infrastructure.user.port.`in`
+package pl.ejdev.agent.infrastructure.pubmed.port.out.add
 
 import pl.ejdev.agent.infrastructure.base.port.Port
 import pl.ejdev.agent.infrastructure.user.dto.AddUserArticlesEvent

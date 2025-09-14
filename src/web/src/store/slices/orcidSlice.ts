@@ -50,7 +50,9 @@ export const updateOrcid = createAsyncThunk(
 export const findOrcid = createAsyncThunk("orcid/find", async () => {
   try {
     const response = await apiClient.request(`/api/orcid`, { method: "GET" });
-    if (response.status !== 200) throw new Error("Failed to find orcid");
+    if (response.status !== 200) {
+      return defaultOrcid;
+    }
     const json = await response.json();
     return json;
   } catch (error) {

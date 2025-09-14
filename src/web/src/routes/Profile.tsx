@@ -27,14 +27,34 @@ const Profile = () => {
   const { users } = useAppSelector((state) => state.users);
   const { orcid } = useAppSelector((state) => state.orcid);
 
+  if (users.length === 0) {
+    useEffect(() => {
+      if (users.length === 0) {
+        dispatch(fetchAllUsers());
+      }
+    }, []);
+    return <div>Loading...</div>;
+  }
+
+  if (orcid.id === null) {
+    const user = users.find((it) => it.name == name)!!;
+    useEffect(() => {
+      console.log("orcid: ", orcid);
+      if (orcid.id === null) {
+        dispatch(findOrcid());
+      }
+    }, []);
+
+    <section id="profiles">
+      <UserProfile user={user!!} />
+      <OrcidProfile user={user} orcid={orcid} />
+    </section>;
+  }
+
+  const user = users.find((it) => it.name == name)!!;
+
   useEffect(() => {
-    if (users.length === 0) {
-      dispatch(fetchAllUsers());
-    }
-    if (orcid === defaultOrcid) {
-      dispatch(findOrcid());
-    }
-    if (orcid !== defaultOrcid) {
+    if (orcid.id !== null) {
       const payload = {
         query: orcid.id!!,
         email: orcid.email,
@@ -42,13 +62,7 @@ const Profile = () => {
       };
       dispatch(searchPubmedArticles(payload));
     }
-  }, [orcid, users]);
-
-  if (users.length === 0) {
-    return <div>Loading...</div>;
-  }
-
-  const user = users.find((it) => it.name == name)!!;
+  }, [orcid]);
 
   return (
     <section id="profiles">
@@ -143,9 +157,12 @@ const UserProfile = ({ user }: { user: User }) => {
 const OrcidProfile = ({ user, orcid }: { user: User; orcid: Orcid }) => {
   const dispatch = useAppDispatch();
   const [orcidState, setOrcidState] = React.useState(orcid);
+
   const sendUpdateOrcid = (e: React.FormEvent) => {
-    e.preventDefault();
-    dispatch(updateOrcid(orcidState.id!!));
+    if (orcidState.id !== null) {
+      e.preventDefault();
+      dispatch(updateOrcid(orcidState.id!!));
+    }
   };
 
   let url = new URL("https://orcid.org/orcid-search/search");

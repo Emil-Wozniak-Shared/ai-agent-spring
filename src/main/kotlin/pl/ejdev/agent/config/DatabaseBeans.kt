@@ -24,20 +24,21 @@ fun BeanDefinitionDsl.dbConfiguration() {
             user = env["spring.datasource.username"]!!,
             password = env["spring.datasource.password"]!!,
             driver = Driver::class.java.name
-        ).apply {
-            transaction {
-                addLogger(StdOutSqlLogger)
-                UserTable.createIfNotExist()
-                OrcidProfileTable.createIfNotExist()
-                ArticleTable.createIfNotExist()
-                UserArticleTable.createIfNotExist()
-                MigrationUtils.statementsRequiredForDatabaseMigration(
-                    UserTable, OrcidProfileTable, ArticleTable, UserArticleTable,
-                    withLogs = true,
-                )
-                .forEach { exec(it) }
-            }
-        }
+        ).setupDatabase()
+    }
+}
+
+private fun Database.setupDatabase() = apply {
+    transaction {
+        addLogger(StdOutSqlLogger)
+        UserTable.createIfNotExist()
+        OrcidProfileTable.createIfNotExist()
+        ArticleTable.createIfNotExist()
+        UserArticleTable.createIfNotExist()
+        MigrationUtils.statementsRequiredForDatabaseMigration(
+            UserTable, OrcidProfileTable, ArticleTable, UserArticleTable,
+            withLogs = true,
+        ).forEach(::exec)
     }
 }
 

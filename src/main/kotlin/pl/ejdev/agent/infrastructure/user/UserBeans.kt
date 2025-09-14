@@ -2,11 +2,9 @@ package pl.ejdev.agent.infrastructure.user
 
 import org.springframework.context.support.BeanDefinitionDsl
 import pl.ejdev.agent.infrastructure.user.adapter.all.GetAllUsersAdapter
-import pl.ejdev.agent.infrastructure.user.adapter.articles.add.AddUserArticlesAdapter
 import pl.ejdev.agent.infrastructure.user.adapter.create.CreateUserAdapter
 import pl.ejdev.agent.infrastructure.user.adapter.get.GetUserAdapter
 import pl.ejdev.agent.infrastructure.user.adapter.repository.UserRepositoryImpl
-import pl.ejdev.agent.infrastructure.user.port.`in`.AddUserArticlesPort
 import pl.ejdev.agent.infrastructure.user.port.`in`.CreateUserPort
 import pl.ejdev.agent.infrastructure.user.port.`in`.GetAllUsersPort
 import pl.ejdev.agent.infrastructure.user.port.`in`.GetUserPort
@@ -22,7 +20,6 @@ fun BeanDefinitionDsl.userBeans() {
     bean<GetUserPort> { GetUserAdapter(ref()) }
     bean<GetAllUsersPort> { GetAllUsersAdapter(ref()) }
     bean<CreateUserPort> { CreateUserAdapter(ref(), ref()) }
-    bean<AddUserArticlesPort> { AddUserArticlesAdapter(ref()) }
     bean<GetUserUseCase>()
     bean<GetAllUsersUseCase>()
     bean<CreateUserUseCase>()
