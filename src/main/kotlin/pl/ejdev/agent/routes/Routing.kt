@@ -8,6 +8,7 @@ import org.springframework.web.servlet.function.router
 import pl.ejdev.agent.config.web.RouterConfig
 import pl.ejdev.agent.config.exceptions.ExceptionHandlerFilter
 import pl.ejdev.agent.infrastructure.documents.DocumentHandler
+import pl.ejdev.agent.infrastructure.openai.OpenAiHandler
 import pl.ejdev.agent.infrastructure.orcid.OrcidHandler
 import pl.ejdev.agent.infrastructure.pubmed.PubmedArticlesHandler
 import pl.ejdev.agent.infrastructure.user.UserHandler
@@ -20,7 +21,8 @@ fun BeanDefinitionDsl.routes() {
             documentHandler = ref(),
             tokenHandler = ref(),
             pubmedArticlesHandler = ref(),
-            orcidHandler = ref()
+            orcidHandler = ref(),
+            openAiHandler = ref()
         )
     }
 }
@@ -30,7 +32,8 @@ fun routerFunction(
     documentHandler: DocumentHandler,
     tokenHandler: TokenHandler,
     pubmedArticlesHandler: PubmedArticlesHandler,
-    orcidHandler: OrcidHandler
+    orcidHandler: OrcidHandler,
+    openAiHandler: OpenAiHandler
 ): RouterFunction<ServerResponse> = router {
     filter(RouterConfig::filter)
     filter(ExceptionHandlerFilter::filter)
@@ -56,6 +59,9 @@ fun routerFunction(
         ("/orcid" and contentType(APPLICATION_JSON)).nest {
             GET(orcidHandler::find)
             PUT(orcidHandler::update)
+        }
+        ("/ask" and contentType(APPLICATION_JSON)).nest {
+            GET("/describe", openAiHandler::describe)
         }
         ("/token" and contentType(APPLICATION_JSON)).nest {
             POST(tokenHandler::create)
