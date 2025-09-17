@@ -16,6 +16,7 @@ export interface User {
   createdAt: Date;
   updatedAt: Date;
   roles: string[];
+  description?: string | null
 }
 
 export const emptyUser: User = {
@@ -29,6 +30,7 @@ export const emptyUser: User = {
   createdAt: new Date(),
   updatedAt: new Date(),
   roles: ["user"],
+  description: null
 } as User;
 
 interface UserState {
@@ -128,6 +130,21 @@ export const updateUser = createAsyncThunk(
   },
 );
 
+export const describeUser = createAsyncThunk(
+  "users/describe",
+  async (
+  ) => {
+    try {
+      const response = await apiClient.request(`/api/ask/describe`, { method: "GET" });
+    console.log('response thunk' , response)
+      if (!response.ok) throw new Error("Failed to update user");
+      return await response.json();
+    } catch (error) {
+     console.error(error);
+    }
+  },
+);
+
 const userSlice = createSlice({
   name: "users",
   initialState,
@@ -180,6 +197,23 @@ const userSlice = createSlice({
         state.users.push(action.payload);
       })
       .addCase(createUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      // describe user
+      .addCase(describeUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(describeUser.fulfilled, (state, action) => {
+        state.loading = false;
+        const response = action.payload
+        console.log('response', response)
+        const index = state.users.findIndex(it => it.email === response.email)
+        console.log('index', index)
+        state.users[index].description = response.description;
+      })
+      .addCase(describeUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })

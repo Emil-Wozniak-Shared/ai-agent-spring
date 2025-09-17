@@ -14,13 +14,5 @@ apiRequestMiddleware.startListening({
 apiRequestMiddleware.startListening({
   matcher: isAsyncThunkAction,
   effect: async (action, listenerApi) => {
-//     const cookies = new Cookies();
-//     const token = cookies.get('X-TOKEN');
-//     if (token) {
-//       action.headers = {
-//         ...action.headers,
-//         'Authorization': `Bearer ${token}`
-//       };
-//     }
   },
 });

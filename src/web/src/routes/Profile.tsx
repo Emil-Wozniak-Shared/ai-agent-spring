@@ -4,8 +4,9 @@ import {
   fetchAllUsers,
   createUser,
   updateUser,
-  type User,
+  describeUser,
   emptyUser,
+  type User,
 } from "../store/slices/userSlice";
 import {
   defaultOrcid,
@@ -19,13 +20,14 @@ import { Button } from "~/components/ui/button";
 import UserCard from "~/components/user/UserCard";
 import { addNotification } from "~/store/slices/appSlice";
 import { useParams } from "react-router";
-import { searchPubmedArticles } from "~/store/slices/pubmedSlice";
+import { searchPubmedArticles, type PubmedArticle } from "~/store/slices/pubmedSlice";
 
 const Profile = () => {
   const dispatch = useAppDispatch();
   const { name } = useParams();
   const { users } = useAppSelector((state) => state.users);
   const { orcid } = useAppSelector((state) => state.orcid);
+  const { articles } = useAppSelector((state) => state.pubmed);
 
   if (users.length === 0) {
     return <div>Loading...</div>;
@@ -42,34 +44,36 @@ const Profile = () => {
     );
   }
 
-  useEffect(() => {
-    if (orcid.id !== null) {
-      dispatch(
-        searchPubmedArticles({
-          query: orcid.id!!,
-          email: orcid.email,
-          maxResults: 20,
-        }),
-      );
-    }
-  }, [orcid]);
+  const getDescription = async () => { await dispatch(describeUser()) }
 
   return (
     <section id="profiles">
       <UserProfile user={user!!} />
       {orcid !== null && (
         <>
+          <Button className="btn btn-primary" onClick={(event) => getDescription()}>Describe</Button>
           <OrcidProfile user={user} orcid={orcid} />
-          <Publications orcid={orcid} />
+          <Publications orcid={orcid} articles={articles} />
         </>
       )}
     </section>
   );
 };
 
-const Publications = ({ orcid }: { orcid: Orcid }) => {
+const Publications = ({ orcid, articles }: { orcid: Orcid, articles: PubmedArticle[] }) => {
   const dispatch = useAppDispatch();
-  const { articles } = useAppSelector((state) => state.pubmed);
+  useEffect(() => {
+      if (orcid.id !== null && articles.size === 0) {
+        dispatch(
+          searchPubmedArticles({
+            query: orcid.id!!,
+            email: orcid.email,
+            maxResults: 20,
+          }),
+        );
+      }
+  }, []);
+
   const fetchDocs = async () => {
     try {
       const payload = {
@@ -147,6 +151,17 @@ const UserProfile = ({ user }: { user: User }) => {
 const OrcidProfile = ({ user, orcid }: { user: User; orcid: Orcid }) => {
   const dispatch = useAppDispatch();
   const [orcidState, setOrcidState] = React.useState(orcid);
+  useEffect(() => {
+    if (orcid.id !== null) {
+      dispatch(
+        searchPubmedArticles({
+          query: orcid.id!!,
+          email: orcid.email,
+          maxResults: 20,
+        }),
+      );
+    }
+  }, []);
 
   const sendUpdateOrcid = (e: React.FormEvent) => {
     if (orcidState.id !== null) {

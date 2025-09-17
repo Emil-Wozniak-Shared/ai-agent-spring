@@ -21,7 +21,10 @@ class OpenAiHandler(
                         .body(it.message)
                     is DescribeUserResult.Success -> ServerResponse.ok()
                         .contentType(MediaType.APPLICATION_JSON)
-                        .body(DescribeUserResponse(it.description))
+                        .body(DescribeUserResponse(
+                            it.email,
+                            it.description
+                        ))
                 }
             }
 }

@@ -29,8 +29,7 @@ export const createToken = createAsyncThunk(
         body: JSON.stringify(credentials),
       });
       if (!response.ok) throw new Error("Authentication failed");
-      const json = await response.json();
-      return json;
+      return response
     } catch (error) {
       return rejectWithValue(
         error instanceof Error ? error.message : "Unknown error",

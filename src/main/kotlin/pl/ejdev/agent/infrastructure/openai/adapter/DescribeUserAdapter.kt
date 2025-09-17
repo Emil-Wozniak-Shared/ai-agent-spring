@@ -19,7 +19,7 @@ class DescribeUserAdapter(
         .let(::createMessages)
         .let(::completionRequest)
         .let(openAiApi::chatCompletionEntity)
-        .handleResponse()
+        .handleResponse(event.email)
 
     private fun createMessages(articleTitles: List<String>): List<ChatCompletionMessage> =
         listOf(
@@ -42,7 +42,10 @@ class DescribeUserAdapter(
             ),
         )
 
-    private fun ResponseEntity<OpenAiApi.ChatCompletion>.handleResponse(): DescribeUserResult =
+    private fun ResponseEntity<OpenAiApi.ChatCompletion>.handleResponse(email: String): DescribeUserResult =
         if (!statusCode.is2xxSuccessful) DescribeUserResult.Failure("Failed to received description from AI assistant")
-        else DescribeUserResult.Success(body!!.choices.first().message.content())
+        else DescribeUserResult.Success(
+            email,
+            body!!.choices.first().message.content()
+        )
 }

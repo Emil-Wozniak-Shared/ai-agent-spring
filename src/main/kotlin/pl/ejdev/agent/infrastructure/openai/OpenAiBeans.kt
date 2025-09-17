@@ -12,6 +12,7 @@ fun BeanDefinitionDsl.openAiBeans() {
     bean<OpenAiEmbeddingModel>()
     bean<DescribeUserPort> { DescribeUserAdapter(ref()) }
     bean<DescribeUserUseCase>()
+    bean<OpenAiHandler>()
 }
 
 private fun BeanDefinitionDsl.openAiApi(): OpenAiApi =

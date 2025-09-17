@@ -17,16 +17,13 @@ class DescribeUserUseCase(
     private val getUserArticlesPort: GetUserArticlesPort
 ) : UseCase<DescribeUserQuery, DescribeUserResult> {
     override fun handle(query: DescribeUserQuery): DescribeUserResult =
-        getArticles()
-            .let(::DescribeUserEvent)
+        SecurityContextHolder.getContext().userEntity.email
+            .let { DescribeUserEvent(email = it, articles = getArticles(it)) }
             .let(describeUserPort::handle)
 
-    private fun getArticles(): List<PubmedArticle> {
-        val userEntity = SecurityContextHolder.getContext().userEntity
-        val event = GetUserArticlesEvent(userEntity.email)
-        return when (val articleResult = getUserArticlesPort.handle(event)) {
+    private fun getArticles(email: String): List<PubmedArticle> =
+        when (val articleResult = getUserArticlesPort.handle(GetUserArticlesEvent(email))) {
             is GetUserArticlesResult.Failure -> listOf()
             is GetUserArticlesResult.Success -> articleResult.articles
         }
-    }
 }

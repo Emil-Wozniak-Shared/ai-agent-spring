@@ -25,13 +25,13 @@ const Login: React.FC = () => {
     e.preventDefault();
     try {
       const response = await dispatch(createToken(credentials)).unwrap();
-      setCookie(TOKEN_NAME, response.token)
-      dispatch(
-        addNotification({
-          message: "Login successful!",
-          type: "success",
-        }),
-      );
+      for (var pair of response.headers.entries()) {
+          if (pair[0] === 'x-token') {
+              setCookie(TOKEN_NAME, pair[1])
+          }
+      }
+
+      dispatch(addNotification({ message: "Login successful!", type: "success" }));
       setCredentials({ login: "", password: "" });
     } catch (error) {
       dispatch(
@@ -46,12 +46,7 @@ const Login: React.FC = () => {
   const handleLogout = () => {
     removeCookie(TOKEN_NAME)
     dispatch(logout());
-    dispatch(
-      addNotification({
-        message: "Logged out successfully",
-        type: "info",
-      }),
-    );
+    dispatch(addNotification({ message: "Logged out successfully", type: "info" }));
   };
 
   if (authorized) {

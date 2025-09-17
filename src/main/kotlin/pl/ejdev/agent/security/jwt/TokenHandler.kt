@@ -33,7 +33,7 @@ class TokenHandler(
                 ServerResponse.ok()
                     .contentType(APPLICATION_JSON)
                     .headers { it.set(X_TOKEN, token.token) }
-                    .body(token)
+                    .build()
             }
     }
 
