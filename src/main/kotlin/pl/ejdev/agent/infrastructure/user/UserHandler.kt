@@ -1,11 +1,12 @@
 package pl.ejdev.agent.infrastructure.user
 
-import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.web.servlet.function.ServerRequest
 import org.springframework.web.servlet.function.ServerResponse
 import org.springframework.web.servlet.function.body
 import pl.ejdev.agent.domain.UserDto
+import pl.ejdev.agent.infrastructure.base.problem.problemDetails
 import pl.ejdev.agent.infrastructure.user.dto.*
 import pl.ejdev.agent.infrastructure.user.usecase.CreateUserUseCase
 import pl.ejdev.agent.infrastructure.user.usecase.GetAllUsersUseCase
@@ -18,80 +19,55 @@ class UserHandler(
     private val createUserUseCase: CreateUserUseCase,
 
     ) {
-    fun getAllUsers(request: ServerRequest): ServerResponse = try {
-        val users: GetAllUsersResult = getAllUsersUseCase.handle(GetAllUsersQuery)
+    fun getAllUsers(request: ServerRequest): ServerResponse =
         ServerResponse.ok()
             .contentType(APPLICATION_JSON)
-            .body(users)
-    } catch (e: Exception) {
-        ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body(mapOf("error" to "Failed to retrieve users"))
-    }
+            .body(getAllUsersUseCase.handle(GetAllUsersQuery))
 
-    fun getUserByEmail(request: ServerRequest): ServerResponse {
-        return try {
-            val id = request.pathVariable("id").toLongOrNull()
-                ?: return ServerResponse.badRequest()
-                    .body(mapOf("error" to "Invalid user ID"))
-
-            when (val result = getUserUseCase.handle(GetUserQuery(id))) {
-                is GetUserResult.Empty -> ServerResponse.notFound().build()
-                is GetUserResult.Some -> ServerResponse.ok()
-                    .contentType(APPLICATION_JSON)
-                    .body(result.userDto)
-            }
-        } catch (e: Exception) {
-            ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(mapOf("error" to "Failed to retrieve user"))
-        }
-    }
-
-    fun createUser(request: ServerRequest): ServerResponse {
-        try {
-            val userRequest = request.body<CreateUserRequest>()
-            if (userRequest.password.isBlank() || userRequest.name.isBlank()) {
-                return ServerResponse.badRequest()
-                    .body(mapOf("error" to "Name and password are required"))
-            }
-
-            return when (val result = createUserUseCase.handle(CreateUserQuery(UserDto.from(userRequest)))) {
-                is CreateUserResult.Failure -> ServerResponse.badRequest()
-                    .contentType(APPLICATION_JSON)
-                    .body(result.message)
-                is CreateUserResult.Success -> ServerResponse.status(HttpStatus.CREATED)
-                    .contentType(APPLICATION_JSON)
-                    .body(result.id)
-            }
-        } catch (e: Exception) {
-            return ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(mapOf("error" to "Failed to create user"))
-        }
-    }
-    fun updateUser(request: ServerRequest): ServerResponse = try {
-        val id = request.id ?: return missingId()
-        when (val result = getUserUseCase.handle(GetUserQuery(id))) {
-            is GetUserResult.Empty -> ServerResponse.notFound().build()
-            is GetUserResult.Some -> {
-                val userRequest = request.body<UpdateUserRequest>()
-                val updatedUser = result.userDto.copy(
-                    name = userRequest.name,
-                    password = userRequest.password
-                )
-
-                when (val result = createUserUseCase.handle(CreateUserQuery(updatedUser))) {
-                    is CreateUserResult.Failure -> ServerResponse.badRequest()
-                        .body(result.message)
-                    is CreateUserResult.Success ->  ServerResponse.ok()
+    fun getUserByEmail(request: ServerRequest): ServerResponse =
+        request.id
+            ?.let { id ->
+                when (val result = getUserUseCase.handle(GetUserQuery(id))) {
+                    is GetUserResult.Empty -> ServerResponse.notFound().build()
+                    is GetUserResult.Some -> ServerResponse.ok()
                         .contentType(APPLICATION_JSON)
-                        .body(result.id)
+                        .body(result.userDto)
                 }
             }
-        }
-    } catch (e: Exception) {
-        ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body(mapOf("error" to "Failed to update user"))
-    }
+            ?: request.missingId()
 
-    private fun missingId(): ServerResponse =
-        ServerResponse.badRequest().body(mapOf("error" to "Missing id"))
+
+    fun createUser(request: ServerRequest): ServerResponse = request.body<CreateUserRequest>()
+        .takeIf { it.valid }
+        ?.let {
+            when (val result = createUserUseCase.handle(CreateUserQuery(UserDto.from(it)))) {
+                is CreateUserResult.Success -> ServerResponse.status(CREATED)
+                    .contentType(APPLICATION_JSON)
+                    .body(result.id)
+
+                is CreateUserResult.Failure -> problemDetails(request, "Failed to create user", result.message)
+            }
+        }
+        ?: problemDetails(request, "Name and password are required")
+
+    fun updateUser(request: ServerRequest): ServerResponse = request.id
+        ?.let { id ->
+            when (val getUserResult = getUserUseCase.handle(GetUserQuery(id))) {
+                is GetUserResult.Empty -> ServerResponse.notFound().build()
+                is GetUserResult.Some -> request.body<UpdateUserRequest>()
+                    .let { getUserResult.userDto.copy(name = it.name, password = it.password) }
+                    .let { updatedUser ->
+                        when (val result = createUserUseCase.handle(CreateUserQuery(updatedUser))) {
+                            is CreateUserResult.Failure -> ServerResponse.badRequest().body(result.message)
+
+                            is CreateUserResult.Success -> ServerResponse.ok()
+                                .contentType(APPLICATION_JSON)
+                                .body(result.id)
+                        }
+                    }
+            }
+        }
+        ?: request.missingId()
+
+    private fun ServerRequest.missingId(): ServerResponse = problemDetails(this, "Invalid user ID")
 }
