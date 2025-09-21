@@ -1,0 +1,44 @@
+[versions]
+kotlin = "2.2.20"
+exposed = "1.0.0-rc-1"
+postgres = "42.7.7"
+jackson = "2.20.0"
+jjwt = "0.11.1"
+qdrant = "1.11.0"
+kotlin-logging = "7.0.13"
+arrowkt = "2.1.2"
+arrow-test = "0.10.4"
+junit-jupiter = "5.7.1"
+springmockk = "4.0.2"
+htmlunit = "4.15.0"
+
+[libraries]
+postgresql = { module = "org.postgresql:postgresql", version.ref = "postgres" }
+exposed-core = { module = "org.jetbrains.exposed:exposed-core", version.ref = "exposed" }
+exposed-jdbc = { module = "org.jetbrains.exposed:exposed-jdbc", version.ref = "exposed" }
+exposed-java-time = { module = "org.jetbrains.exposed:exposed-java-time", version.ref = "exposed" }
+exposed-dao = { module = "org.jetbrains.exposed:exposed-dao", version.ref = "exposed" }
+exposed-migration-core = { module = "org.jetbrains.exposed:exposed-migration-core", version.ref = "exposed" }
+exposed-migration-jdbc = { module = "org.jetbrains.exposed:exposed-migration-jdbc", version.ref = "exposed" }
+jackson-core = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson" }
+jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson" }
+jackson-dataformat-xml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-xml", version.ref = "jackson" }
+jjwt-api = { module = "io.jsonwebtoken:jjwt-api", version.ref = "jjwt" }
+jjwt-impl = { module = "io.jsonwebtoken:jjwt-impl", version.ref = "jjwt" }
+jjwt-jackson = { module = "io.jsonwebtoken:jjwt-jackson", version.ref = "jjwt" }
+qdrant-client = { module = "io.qdrant:client", version.ref = "qdrant" }
+kotlin-logging = { module = "io.github.oshai:kotlin-logging", version.ref = "kotlin-logging" }
+arrow-core-jvm = { module = "io.arrow-kt:arrow-core-jvm", version.ref = "arrowkt" }
+arrow-core = { module = "io.arrow-kt:arrow-core", version.ref = "arrowkt" }
+# TEST
+arrow-test = { module = "io.arrow-kt:arrow-test", version.ref = "arrow-test" }
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit-jupiter" }
+springmockk = { module = "com.ninja-squad:springmockk", version.ref = "springmockk" }
+htmlunit = { module = "org.htmlunit:htmlunit", version.ref = "htmlunit" }
+
+[plugins]
+spring-boot = { id = "org.springframework.boot", version = "3.5.4" }
+dependency-management = { id = "io.spring.dependency-management", version = "1.1.7" }
+node-gradle = { id = "com.github.node-gradle.node", version = "7.0.1" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-spring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlin" }

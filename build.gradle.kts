@@ -1,11 +1,11 @@
 import com.github.gradle.node.npm.task.NpmTask
 
 plugins {
-    kotlin("jvm") version "2.2.10"
-    kotlin("plugin.spring") version "2.2.10"
-    id("org.springframework.boot") version "3.5.4"
-    id("io.spring.dependency-management") version "1.1.7"
-    id("com.github.node-gradle.node") version "7.0.1"
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.kotlin.spring)
+    alias(libs.plugins.spring.boot)
+    alias(libs.plugins.dependency.management)
+    alias(libs.plugins.node.gradle)
 }
 
 group = "pl.ejdev"
@@ -30,41 +30,34 @@ dependencies {
     implementation("org.springframework.ai:spring-ai-advisors-vector-store")
     implementation("org.springframework.ai:spring-ai-starter-model-openai")
     implementation("org.springframework.security:spring-security-crypto")
-
-    implementation("org.postgresql:postgresql:42.7.7")
-    implementation("org.jetbrains.exposed:exposed-core:1.0.0-rc-1")
-    implementation("org.jetbrains.exposed:exposed-jdbc:1.0.0-rc-1")
-    implementation("org.jetbrains.exposed:exposed-java-time:1.0.0-rc-1")
-    implementation("org.jetbrains.exposed:exposed-dao:1.0.0-rc-1")
-    implementation("org.jetbrains.exposed:exposed-migration-core:1.0.0-rc-1")
-    implementation("org.jetbrains.exposed:exposed-migration-jdbc:1.0.0-rc-1")
-
+    implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
-    implementation("com.fasterxml.jackson.core:jackson-core:2.20.0")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.20.0")
-
-    implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
-    implementation("io.qdrant:client:1.11.0")
-
-    implementation("io.jsonwebtoken:jjwt-api:0.11.1")
-    implementation("io.jsonwebtoken:jjwt-impl:0.11.1")
-    implementation("io.jsonwebtoken:jjwt-jackson:0.11.1")
-
-    // logging
-    implementation("io.github.oshai:kotlin-logging:7.0.13")
-
-    implementation("io.arrow-kt:arrow-core-jvm:2.1.2")
-    runtimeOnly("io.arrow-kt:arrow-core:2.1.2")
-    testImplementation("io.arrow-kt:arrow-test:0.10.4")
+    implementation(libs.postgresql)
+    implementation(libs.exposed.core)
+    implementation(libs.exposed.jdbc)
+    implementation(libs.exposed.java.time)
+    implementation(libs.exposed.dao)
+    implementation(libs.exposed.migration.core)
+    implementation(libs.exposed.migration.jdbc)
+    implementation(libs.jackson.core)
+    implementation(libs.jackson.module.kotlin)
+    implementation(libs.jackson.dataformat.xml)
+    implementation(libs.jjwt.api)
+    implementation(libs.jjwt.impl)
+    implementation(libs.jjwt.jackson)
+    implementation(libs.qdrant.client)
+    implementation(libs.kotlin.logging)
+    implementation(libs.arrow.core.jvm)
+    runtimeOnly(libs.arrow.core)
+    testImplementation(libs.arrow.test)
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.7.1")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
-    testImplementation("com.ninja-squad:springmockk:4.0.2")
-    testImplementation("org.htmlunit:htmlunit:4.15.0")
+    testImplementation(libs.junit.jupiter)
+    testImplementation(libs.springmockk)
+    testImplementation(libs.htmlunit)
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
@@ -109,7 +102,7 @@ tasks.register<NpmTask>("buildReact") {
 tasks.register<NpmTask>("startReact") {
     description = "Start React development server"
     dependsOn("npmInstall")
-    args.set(listOf("start"))
+    args.set(listOf("dev"))
     workingDir.set(file("src/web"))
 }
 
