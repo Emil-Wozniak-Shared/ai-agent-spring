@@ -51,9 +51,7 @@ export const fetchAllUsers = createAsyncThunk(
   "users/fetchAll",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await apiClient.request("/api/users", {
-        headers: { Accept: "application/json" },
-      });
+      const response = await apiClient.request("/api/users");
       if (!response.ok) throw new Error("Failed to fetch users");
       const json = await response.json();
       return json.users;
@@ -70,9 +68,7 @@ export const fetchUserById = createAsyncThunk(
   "users/fetchById",
   async (id: number, { rejectWithValue }) => {
     try {
-      const response = await apiClient.request(`/api/users/${id}`, {
-        headers: { Accept: "application/json" },
-      });
+      const response = await apiClient.request(`/api/users/${id}`);
       if (!response.ok) throw new Error("User not found");
       return await response.json();
     } catch (error) {
@@ -89,10 +85,6 @@ export const createUser = createAsyncThunk(
     try {
       const response = await apiClient.request("/api/users", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
         body: JSON.stringify(userData),
       });
       if (!response.ok) throw new Error("Failed to create user");
@@ -114,10 +106,6 @@ export const updateUser = createAsyncThunk(
     try {
       const response = await apiClient.request(`/api/users/${email}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
         body: JSON.stringify(userData),
       });
       if (!response.ok) throw new Error("Failed to update user");

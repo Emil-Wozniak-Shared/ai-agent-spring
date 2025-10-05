@@ -5,8 +5,8 @@ import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.web.servlet.function.RouterFunction
 import org.springframework.web.servlet.function.ServerResponse
 import org.springframework.web.servlet.function.router
-import pl.ejdev.agent.config.web.RouterConfig
 import pl.ejdev.agent.config.exceptions.ExceptionHandlerFilter
+import pl.ejdev.agent.config.web.RouterConfig
 import pl.ejdev.agent.infrastructure.documents.DocumentHandler
 import pl.ejdev.agent.infrastructure.openai.OpenAiHandler
 import pl.ejdev.agent.infrastructure.orcid.OrcidHandler
@@ -27,6 +27,8 @@ fun BeanDefinitionDsl.routes() {
     }
 }
 
+private const val UP = "UP"
+
 fun routerFunction(
     userHandler: UserHandler,
     documentHandler: DocumentHandler,
@@ -37,9 +39,9 @@ fun routerFunction(
 ): RouterFunction<ServerResponse> = router {
     filter(RouterConfig::filter)
     filter(ExceptionHandlerFilter::filter)
-    ("/api" and accept(APPLICATION_JSON)).nest {
+    ("/api" and contentType(APPLICATION_JSON)).nest {
         GET("/health") {
-            ServerResponse.ok().contentType(APPLICATION_JSON).body("UP")
+            ServerResponse.ok().contentType(APPLICATION_JSON).body(mapOf("status" to UP))
         }
         "/users".nest {
             GET("", userHandler::getAllUsers)
@@ -47,24 +49,25 @@ fun routerFunction(
             POST("", userHandler::createUser)
             PUT("/{id}", userHandler::updateUser)
         }
-        ("/documents" and accept(APPLICATION_JSON) and contentType(APPLICATION_JSON)).nest {
+        "/documents".nest {
             POST("", documentHandler::createMany)
             POST("/search", documentHandler::search)
         }
-        ("/pubmed" and contentType(APPLICATION_JSON)).nest {
+        "/pubmed".nest {
             POST("/search/articles", pubmedArticlesHandler::search)
             POST("/search/articles/{ids}", pubmedArticlesHandler::searchBy)
             POST("/articles/{id}/abstract", pubmedArticlesHandler::abstract)
         }
-        ("/orcid" and contentType(APPLICATION_JSON)).nest {
+        "/orcid".nest {
             GET(orcidHandler::find)
             PUT(orcidHandler::update)
         }
-        ("/ask" and contentType(APPLICATION_JSON)).nest {
+        "/ask".nest {
             GET("/describe", openAiHandler::describe)
         }
-        ("/token" and contentType(APPLICATION_JSON)).nest {
+        "/token".nest {
             POST(tokenHandler::create)
         }
     }
 }
+

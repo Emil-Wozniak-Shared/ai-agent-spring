@@ -44,7 +44,7 @@ class SearchSummarizeArticlesUseCase(
                 is GetUserArticlesResult.Success -> result.articles
                 is GetUserArticlesResult.Failure -> listOf()
             }
-            articles.ifEmpty { requestPubmedArticles(query).also { persist(query, articles) } }
+            articles.ifEmpty { requestPubmedArticles(query).also { persist(query, it) } }
         } else {
             throw NotCurrentUserOrcidError(query.query)
         }

@@ -11,6 +11,8 @@ import pl.ejdev.agent.infrastructure.openai.port.`in`.DescribeUserPort
 import pl.ejdev.agent.infrastructure.openai.utils.completionMessage
 import pl.ejdev.agent.infrastructure.openai.utils.completionRequest
 
+private const val TITLE_SEPARATOR = ", "
+
 class DescribeUserAdapter(
     private val openAiApi: OpenAiApi
 ) : DescribeUserPort {
@@ -18,7 +20,7 @@ class DescribeUserAdapter(
         .map { it.title }
         .let(::createMessages)
         .let(::completionRequest)
-        .let(openAiApi::chatCompletionEntity)
+        .let { openAiApi.chatCompletionEntity(it) }
         .handleResponse(event.email)
 
     private fun createMessages(articleTitles: List<String>): List<ChatCompletionMessage> =
@@ -31,7 +33,7 @@ class DescribeUserAdapter(
                 content = """
               Based on titles below describe the profile of person who wrote them:
               <titles>
-              $articleTitles
+              ${articleTitles.joinToString(TITLE_SEPARATOR)}
               </titles>
     
               - text should be in first person.

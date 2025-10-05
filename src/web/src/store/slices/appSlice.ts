@@ -35,8 +35,7 @@ export const checkBackendConnection = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await apiClient.request("/api/health", {
-        method: "GET",
-        headers: { Accept: "application/json" },
+        method: "GET"
       });
       if (response.ok) {
         return "connected";

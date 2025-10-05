@@ -13,7 +13,7 @@ fun completionMessage(
 
 fun completionRequest(
     messages: List<ChatCompletionMessage>,
-    model: OpenAIConstants.Model = OpenAIConstants.Model.GPT_4,
+    model: OpenAIConstants.Model = OpenAIConstants.Model.GPT_3_5_TURBO,
     temperature: Double = OpenAIConstants.TEMPERATURE,
 ) = ChatCompletionRequest(
     messages,

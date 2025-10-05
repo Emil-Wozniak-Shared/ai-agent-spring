@@ -12,7 +12,7 @@ class OpenAiHandler(
     private val describeUserUseCase: DescribeUserUseCase
 ) {
 
-    fun describe(_r: ServerRequest): ServerResponse =
+    fun describe(request: ServerRequest): ServerResponse =
         describeUserUseCase.handle(DescribeUserQuery)
             .let {
                 when(it) {

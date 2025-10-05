@@ -36,8 +36,8 @@ export class ApiClient {
     };
     if (token) {
       config.headers = {
+        'Authorization': `Bearer ${token}`,
         ...config.headers,
-        'Authorization': `Bearer ${token}`
       }
     }
 
